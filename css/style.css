@@ -1,90 +1,166 @@
+/* BRAND + TOKENS */
+:root{
+  --gold:#cfb991;
+  --text:#1e1e1e;
+  --muted:#5f5b53;
+  --card:#fff;
+  --border:#e5e1d6;
+  --shadow:0 6px 16px rgba(0,0,0,.08);
+  --pill:#ffffff;
+  --pill-border:#d8d3c6;
+  --pill-red:#e45c4a;
+}
+
+/* Global defaults (PFW-style fonts) */
 body{
-    background-color: #cfb991;
-    min-height: 100vh;
-    font-family:  Helvetica, Arial, sans-serif;
+  background-color: var(--gold);
+  min-height:100vh;
+  margin:0;
+  font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size:.875rem; line-height:1.5; word-spacing:.16em;
+  color:var(--text);
 }
-
-//Fonts I found on PFW's Website 
-body,p{font-family:"Noto Sans",Helvetica,Arial,sans-serif;font-size:.875rem;font-weight:400;line-height:1.5;word-spacing:.16em}
-
 h1{
-    font-family:"Roboto",Helvetica,Arial,sans-serif;font-size:2rem;font-weight:700;line-height:1.5;word-spacing:.16em;letter-spacing:.03125rem}@media only screen and (min-width: 0px)and (max-width: 767px){h1{font-size:1.75rem}
-
+  font-family:"Roboto",Helvetica,Arial,sans-serif;
+  font-size:2rem; font-weight:700; line-height:1.5;
+  letter-spacing:.03125rem;
 }
-h2{font-family:"Roboto",Helvetica,Arial,sans-serif;font-size:1.5rem;font-weight:700;line-height:1.5;word-spacing:.16em;letter-spacing:.03125rem}@media only screen and (min-width: 0px)and (max-width: 767px){h2{font-size:1.375rem}}
-
-h3{font-family:"Roboto",Helvetica,Arial,sans-serif;font-size:1.125rem;font-weight:700;line-height:1.5;letter-spacing:.03125rem;word-spacing:.16em}@media only screen and (min-width: 0px)and (max-width: 767px){h3{font-size:1rem}}
-
-h4{font-family:"Noto Sans",Helvetica,Arial,sans-serif;font-size:1rem;font-weight:700;line-height:1.5;word-spacing:.16em}@media only screen and (min-width: 0px)and (max-width: 767px){h4{font-size:.875rem}}
-
-h5{font-family:"Noto Sans",Helvetica,Arial,sans-serif;font-weight:700;font-size:.875rem;line-height:1.5;word-spacing:.16em}@media only screen and (min-width: 0px)and (max-width: 767px){h5{font-size:.75rem}}
-
-//End Fonts
-
-*{
-    margin: 0;
-    padding: 0;
+@media (max-width:767px){ h1{ font-size:1.75rem } }
+h2{
+  font-family:"Roboto",Helvetica,Arial,sans-serif;
+  font-size:1.5rem; font-weight:700; line-height:1.5; letter-spacing:.03125rem;
 }
+@media (max-width:767px){ h2{ font-size:1.375rem } }
 
-nav{
-    background-color: white;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+.container{ max-width:1200px; margin:0 auto; padding:20px; }
+
+/* HEADER (gold band) */
+.browse-header{
+  background:var(--gold);
+  border-bottom:1px solid rgba(0,0,0,.06);
 }
+.browse-header p{ color:var(--muted); margin:.25rem 0 1rem; }
 
-nav ul{
-    width: 100%;
-    list-style: none;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+/* FILTER BAR */
+.filters{
+  display:grid;
+  grid-template-columns: 1fr 220px 220px;
+  gap:12px;
+  margin:16px 0 8px;
 }
-
-nav li{
-    height: 50px;
+.control{ position:relative; }
+.control select,
+.control input{
+  width:100%;
+  appearance:none;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  font: inherit;
+  outline:none;
 }
-
-nav a{
-    height: 100%;
-    padding: 0 30px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    color: black;
+.control-search input{
+  padding-left:42px; /* space for search icon */
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%235f5b53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>');
+  background-repeat:no-repeat; background-position:12px center;
 }
-
-nav a:hover{
-    background-color: #f0f0f0;
-}
-
-nav li:first-child{
-    margin-right: auto;
-}
-
-.sidebar{
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 250px;
-    z-index: 999;
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0);
-    box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-
+.control select{
+  padding-right:40px; /* space for chevron */
+  background-image:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%235f5b53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat:no-repeat; background-position:right 12px center;
 }
 
-.sidebar.open{
-    display: flex;
+/* COUNT LINE WITH FUNNEL ICON */
+.results-count{
+  display:flex; align-items:center; gap:8px;
+  margin:10px 0 0 2px; color:var(--muted); font-weight:600;
+}
+.results-count::before{
+  content:"";
+  width:18px;height:18px; display:inline-block;
+  background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%235f5b53" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg>') no-repeat center/contain;
 }
 
-.sidebar li{
-    width: 100%;
+/* GRID */
+.clothing-main{ padding:10px 0 40px; }
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
 }
 
-.sidebar a{
-    width: 100%
+/* CARD */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.card:hover{ transform: translateY(-2px); box-shadow:0 10px 22px rgba(0,0,0,.12); }
+.card-image-placeholder{
+  position:relative; aspect-ratio: 16/10; background:#eee; overflow:hidden;
+}
+.card-image-placeholder img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.availability-tag{
+  position:absolute; top:10px; right:10px;
+  background:var(--pill);
+  color:#333;
+  border:1px solid var(--pill-border);
+  border-radius:16px;
+  padding:4px 10px;
+  font-size:.75rem; font-weight:700;
+}
+.unavailable-tag{
+  background:var(--pill-red); border-color:transparent; color:#fff;
+}
+
+/* Availability tags */
+.availability-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+/* Available = green pill */
+.availability-tag:not(.unavailable-tag) {
+    background: #4CAF50;   /* Green background */
+    color: #fff;           /* White text */
+    border: none;
+}
+
+/* Unavailable = red pill (already styled) */
+.unavailable-tag {
+    background: #e45c4a;
+    color: #fff;
+    border: none;
+}
+
+.details{ padding:8px 16px 10px; color:#3a372f; }
+.book-appointment{
+  display:inline-flex; align-items:center; gap:6px;
+  margin:4px 16px 16px; font-weight:700; text-decoration:none;
+  color:#0b61c2; border:1px solid var(--border); border-radius:10px; padding:8px 10px;
+}
+.book-appointment::before{ content:"📅"; }
+
+/* RESPONSIVE */
+@media (max-width: 1080px){
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px){
+  .filters{ grid-template-columns: 1fr; }
+}
+@media (max-width: 560px){
+  .container{ padding:16px; }
+  .grid{ grid-template-columns: 1fr; }
 }
