@@ -1,15 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home Page</title>
-        <script src="../js/headLoader.js"></script>
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Closet</title>
 
-    <body>
-        <div id="navbar"></div>
-        <script src="../js/navbar.js"></script>
-        <h1>Career Closet</h1>
-    </body>
+    <!-- Site styles -->
+    <link rel="stylesheet" href="../css/mainPg.css" />
+
+    <!-- Keep your existing loader -->
+    <script src="../js/headLoader.js" defer></script>
+  </head>
+
+  <body>
+    <!-- NAVBAR (injected by navbar.js) -->
+    <div id="navbar"></div>
+    <script src="../js/navbar.js"></script>
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <h1>Professional Attire for Your <span class="accent">Career Success</span></h1>
+          <p class="lead">
+            Access professional clothing and accessories to help you succeed in interviews, career
+            fairs, and your professional journey. Browse our collection online and schedule
+            convenient appointments.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn btn-light" href="/html/browseclothing.html">Browse Clothing</a>
+            <a class="btn btn-dark" href="/html/buildOutfit.html">Build Outfit</a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-number">200+</div>
+              <div class="stat-label">Items Available</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">50+</div>
+              <div class="stat-label">Students Helped Monthly</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">Free</div>
+              <div class="stat-label">Service</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <!-- TODO: replace with your actual image path -->
+          <img src="group_pic.jpg" alt="Browsing outfits on a phone" />
+        </div>
+      </div>
+    </header>
+
+    <div class="gold-divider"></div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <section class="footer-col">
+          <h3>Career Closet</h3>
+          <p>Supporting student success through professional attire and career development resources.</p>
+          <p>A service of the University Career Services Center</p>
+        </section>
+
+        <section class="footer-col">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="/html/browseclothing.html">Browse Clothing</a></li>
+            <li><a href="/html/bookAppointment.html">Book Appointment</a></li>
+            <li><a href="/html/buildOutfit.html">Build Outfit</a></li>
+          </ul>
+        </section>
+
+        <section class="footer-col">
+          <h3>Contact Info</h3>
+          <address>
+            Student Union Building, Room 203<br />
+            123 University Ave<br />
+            Phone: (555) 123-CAREER<br />
+            Email: <a href="mailto:career.closet@university.edu">career.closet@university.edu</a>
+          </address>
+        </section>
+      </div>
+
+      <hr class="footer-rule" />
+      <p class="copyright">© 2024 University Career Services. All rights reserved.</p>
+    </footer>
+  </body>
 </html>
