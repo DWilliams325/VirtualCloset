@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import pfwLogo from "/pfw-Logo.svg"; // logo from public folder
-import "../styles/global.css";    // use your main CSS
+import pfwLogo from "/pfw-Logo.svg"; 
+import "../styles/global.css";   
 
 export default function Navbar() {
   return (
