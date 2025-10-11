@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>About · Career Closet</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="navbar" role="navigation" aria-label="Main">
+    <div class="inner">
+      <a class="brand" href="index.html" aria-label="Career Closet Home">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>Career Closet</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="browse.html">Browse Closet</a>
+        <a href="appointments.html">Appointments</a>
+        <a href="outfit.html">Build Outfit</a>
+        <a href="about.html" class="active">About</a>
+        <a href="sign-in.html">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Intro / mission -->
+    <section class="card" style="background:var(--purdue-gold); color:var(--purdue-black); border:2px solid var(--purdue-black)">
+      <h1 style="margin-top:0">About Career Closet</h1>
+      <p class="lead" style="color:inherit">
+        The Virtual Career Closet connects students with professional attire for interviews, career fairs,
+        presentations, and workplace needs. Browse items by size and category, build outfits, and book an
+        appointment to try on and pick up your selections.
+      </p>
+      <div class="grid">
+        <div class="col-6">
+          <h3>What it’s for</h3>
+          <ul>
+            <li>Equitable access to professional clothing</li>
+            <li>Easy online browsing and filtering</li>
+            <li>Quick appointment scheduling through Handshake</li>
+            <li>Outfit planning to save your favorite looks</li>
+          </ul>
+        </div>
+        <div class="col-6">
+          <h3>How it works</h3>
+          <ol>
+            <li>Browse available items online.</li>
+            <li>Add pieces to your outfit to visualize a look.</li>
+            <li>Use <strong>Schedule via Handshake</strong> to book a pickup time.</li>
+            <li>Visit the closet, try items on, and check out.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="card">
+      <h2 style="margin-top:0">Team</h2>
+      <p class="meta">We’re the student team building and maintaining this project.</p>
+
+      <div class="team-grid">
+        <article class="team-card">
+          <div class="avatar" aria-hidden="true">D</div>
+          <div>
+            <h3 class="team-name">Damian</h3>
+            <p class="meta">Team Lead</p>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="avatar" aria-hidden="true">S</div>
+          <div>
+            <h3 class="team-name">Srinithi</h3>
+            <p class="meta">Developer</p>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="avatar" aria-hidden="true">R</div>
+          <div>
+            <h3 class="team-name">Raul</h3>
+            <p class="meta">Developer</p>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="avatar" aria-hidden="true">S</div>
+          <div>
+            <h3 class="team-name">Savannah</h3>
+            <p class="meta">Developer</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Contact / footer info -->
+    <section class="card">
+      <h2 style="margin-top:0">Contact</h2>
+      <p class="meta">Questions or feedback? Reach out to the team or book a visit.</p>
+      <div class="btn-row">
+        <a class="btn" href="appointments.html">Book Appointment</a>
+        <a class="btn-outline" href="mailto:career-closet@example.edu">Email the Team</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    © <span id="year"></span> Career Closet · Built with Purdue pride 🖤💛
+  </footer>
+
+  <script src="app.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear()</script>
+</body>
+</html>
