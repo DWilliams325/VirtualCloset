@@ -1,0 +1,126 @@
+
+/* Page layout */
+.app-container {
+  background: #f8f9fa;
+  height : 80vh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Main form box */
+.form-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+}
+
+.form-box h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.btn-add:hover {
+  background: #0056b3;
+}
+
+.btn-remove {
+  border: none;
+  background: transparent;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+}
+
+.btn-remove:hover {
+  color: #b02a37;
+}
+
+.btn-submit {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.btn-submit:hover {
+  background: #1e7e34;
+}
+
+.items-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.item {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f3f5;
+}
+
+.error {
+  color: #b00020;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+.success {
+  color: green;
+  text-align: center;
+  margin-top: 16px;
+  font-weight: bold;
+  font-size: 1rem;
+}
