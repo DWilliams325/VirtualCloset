@@ -4,17 +4,7 @@ import "../styles/mainPage.css"; // or wherever your CSS lives
 export default function Home() {
   return (
     <div className="career-closet">
-      <header className="topbar">
-        <nav aria-label="Primary">
-          <ul className="topnav">
-            <li><button id="homeBtn">Home</button></li>
-            <li><button id="browseClthBtn">Browse Closet</button></li>
-            <li><button id="bookAptBtn">Book Appointment</button></li>
-            <li><button id="outfitBtn">Build Outfit</button></li>
-            <li><button id="signIn">Sign In</button></li>
-          </ul>
-        </nav>
-      </header>
+      
 
       <main className="main-section">
         <h1>Professional Attire for Your Career Success</h1>
