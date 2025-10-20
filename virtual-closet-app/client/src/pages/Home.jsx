@@ -1,7 +1,9 @@
 // src/pages/Home.jsx
 import "../styles/mainPage.css"; // or wherever your CSS lives
+import{useNavigate} from "react-router-dom";
 
 export default function Home() {
+  const navigate =useNavigate();
   return (
     <div className="career-closet">
       
@@ -17,8 +19,8 @@ export default function Home() {
         <img src="/group_pic.png" alt="Career Closet Group" />
 
         <div className="main-buttons">
-          <button id="browseBtn">Browse Closet</button>
-          <button id="aptBtn">Book Appointment</button>
+          <button id="browseBtn" onClick={() =>navigate("/browse")}>Browse Closet</button>
+          <button id="aptBtn" onClick={() =>navigate("/book")}>Book Appointment</button>
         </div>
       </main>
 
@@ -32,9 +34,9 @@ export default function Home() {
 
           <h2>Quick Links</h2>
           <div className="footer-buttons">
-            <button id="lowerBrowseBtn">Browse Clothing</button>
-            <button id="lowerBookBtn">Book Appointment</button>
-            <button id="lowerBuildBtn">Build Outfit</button>
+            <button id="lowerBrowseBtn" onClick={() =>navigate("/browse")}> Browse Clothing</button>
+            <button id="lowerBookBtn" onClick={() =>navigate("/book")} > Book Appointment</button>
+            <button id="lowerBuildBtn"onClick={() =>navigate("/build")}  >Build Outfit</button>
           </div>
         </div>
 
