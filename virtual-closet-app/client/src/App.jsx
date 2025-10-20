@@ -9,18 +9,18 @@ import "./styles/global.css";
 
 export default function App() {
   return (
-    <>
-      <NavBar />
-      <main style={{ padding: "1rem" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/browse" element={<BrowseClothing />} />
-          <Route path="/book" element={<BookAppointment />} />
-          <Route path="/build" element={<BuildOutfit />} />
-          <Route path="/signin" element={<SignIn />} />
-        </Routes>
-      </main>
-    </>
+      <>
+        <NavBar />
+        <main style={{ padding: "1rem" }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/browse" element={<BrowseClothing />} />
+            <Route path="/book" element={<BookAppointment />} />
+            <Route path="/build" element={<BuildOutfit />} />
+            <Route path="/signin" element={<SignIn />} />
+          </Routes>
+        </main>
+      </>
   );
-  
+
 }
