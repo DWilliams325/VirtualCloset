@@ -123,7 +123,7 @@ export default function BrowseClothing() {
         </div>
       </main>
 
-      <footer className="footer">© {year} Career Closet</footer>
+      <footer className="footer"> {year} Career Closet</footer>
     </>
   );
 }
