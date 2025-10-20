@@ -1,0 +1,56 @@
+.buildOutfitContainer {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+
+/* LEFT PANEL - full height */
+.leftPanel {
+  width: 50%;
+  background-color: white;
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  padding: 2rem;
+  overflow-y: auto;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* RIGHT SIDE - stacked layout for panel + tips */
+.rightSide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* keeps spacing consistent */
+  padding: 2rem;
+  gap: 1.5rem; /* space between rightPanel and tipsBox */
+}
+
+/* RIGHT PANEL box */
+.rightPanel {
+  background-color: white;
+  border-top-left-radius: 40px;
+  border-bottom-left-radius: 40px;
+  padding: 2rem;
+  flex: 1;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* STYLING TIPS box under right panel */
+.tipsBox {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 1.5rem 2rem;
+  text-align: left;
+}
+
+.tipsBox h3 {
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.tipsBox p {
+  margin: 0.4rem 0;
+  color: #555;
+  line-height: 1.4;
+}
