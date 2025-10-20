@@ -73,57 +73,8 @@ export default function BrowseClothing() {
   const year = new Date().getFullYear();
 
   return (
-    <>
-      {/* Header / Nav */}
-      <header className="navbar" role="navigation" aria-label="Main">
-        <div className="inner">
-          <a className="brand" href="index.html" aria-label="Career Closet Home">
-            <img className="brand-logo" src="pfw-Logo.svg" alt="Purdue Fort Wayne logo" />
-            <span>Career Closet</span>
-          </a>
-          <nav className="nav" aria-label="Primary">
-            <a href="index.html">Home</a>
-            <a href="browse.html">Browse Closet</a>
-            <a href="appointments.html">Appointments</a>
-            <a href="outfit.html">Build Outfit</a>
-            <a href="about.html">About</a>
-            <a href="sign-in.html">Sign In</a>
-          </nav>
-        </div>
-      </header>
-
-      <main className="container">
-        <div className="section-head">
-          <h1>Browse Available Clothing</h1>
-          <p className="section-sub">
-            Explore our collection of professional attire. Items marked as unavailable are currently being used by other
-            students.
-          </p>
-        </div>
-
-        {/* Layout: sidebar + results */}
-        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 16, alignItems: "start" }}>
-          <FiltersSidebar
-            query={query} setQuery={setQuery}
-            availability={availability} setAvailability={setAvailability}
-            CATEGORIES={CATEGORIES} SIZES={SIZES} COLORS={COLORS}
-            selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories}
-            selectedSizes={selectedSizes} toggleSize={toggleSize}
-            selectedColors={selectedColors} toggleColor={toggleColor}
-            clearFilters={clearFilters}
-            totalCount={ITEMS.length} filteredCount={filtered.length}
-          />
-
-          {/* Results */}
-          <section>
-            <div className="browse-grid">
-              {filtered.map((it) => <ItemCard key={it.id} item={it} />)}
-            </div>
-          </section>
-        </div>
-      </main>
-
-      <footer className="footer">© {year} Career Closet</footer>
-    </>
-  );
+    <section>
+      <h1>Browse Clothing</h1>
+    </section>
+  )
 }
