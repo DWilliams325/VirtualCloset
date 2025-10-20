@@ -1,10 +1,9 @@
 // src/pages/Home.jsx
-import "../styles/mainPage.css"; // or wherever your CSS lives
+import "../styles/mainPage.css";
 
 export default function Home() {
   return (
     <div className="career-closet">
-      
 
       <main className="main-section">
         <h1>Professional Attire for Your Career Success</h1>
