@@ -73,6 +73,7 @@ export default function BrowseClothing() {
   const year = new Date().getFullYear();
 
   return (
+<<<<<<< HEAD
     <>
       {/* Header / Nav */}
       <header className="navbar" role="navigation" aria-label="Main">
@@ -126,4 +127,10 @@ export default function BrowseClothing() {
       <footer className="footer"> {year} Career Closet</footer>
     </>
   );
+=======
+    <section>
+      <h1>Browse Clothing</h1>
+    </section>
+  )
+>>>>>>> fdef026f06e0d6b46a2b10b4f41532510732e601
 }
