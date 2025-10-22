@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useAppointment } from "../context/AppointmentContext";
 import "../styles/BookAppointment.css";
@@ -12,9 +12,9 @@ export default function BookAppointment() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const { requestedItems, removeItem, clearItems } = useAppointment();
+  const { requestedItems, addItem, removeItem, clearItems } = useAppointment();
 
-  // Handshake URL: ideally would get access to handshake appointment booking page directly to display time slots
+  // Handshake URL
   const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
 
   // Today (YYYY-MM-DD)
@@ -24,7 +24,7 @@ export default function BookAppointment() {
   const dd = String(now.getDate()).padStart(2, "0");
   const todayStr = `${yyyy}-${mm}-${dd}`;
 
-  //Available time slots
+  // Available time slots
   const TIME_SLOTS = [
     "09:00 AM","09:30 AM","10:00 AM","10:30 AM","11:00 AM",
     "01:00 PM","01:30 PM","02:00 PM","02:30 PM",
@@ -34,15 +34,17 @@ export default function BookAppointment() {
     const text = itemText.trim();
     if (!text) return;
     
-    // Add as a simple text item (for manually entered items)
+    // Create manual item and add to context
     const manualItem = {
       id: `manual-${Date.now()}`,
       name: text,
+      category: "Manual Entry",
+      color: "",
+      size: "",
       isManual: true
     };
     
-    // We'll just add it to the display, but we need to track these separately
-    // For now, let's use the itemText state differently
+    addItem(manualItem);
     setItemText("");
     setError("");
   }
@@ -177,7 +179,11 @@ export default function BookAppointment() {
                 {requestedItems.map((item) => (
                   <div key={item.id} className="item">
                     <span>
-                      {item.name} - {item.category} ({item.color}, Size {item.size})
+                      {item.isManual ? (
+                        item.name
+                      ) : (
+                        `${item.name} - ${item.category} (${item.color}, Size ${item.size})`
+                      )}
                     </span>
                     <button
                       type="button"
