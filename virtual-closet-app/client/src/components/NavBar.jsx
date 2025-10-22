@@ -1,14 +1,15 @@
 import { NavLink } from "react-router-dom";
 import pfwLogo from "/pfw-Logo.svg"; 
-import "../styles/global.css";   
+import "../styles/navBar.css"
 
 export default function Navbar() {
   return (
     <nav>
       <ul>
-        <li>
-          <NavLink to="/" style={{ fontWeight: "bold" }}>
-            Career Closet
+        <li className="brand">
+          <NavLink to="/" className="brandLink">
+            <img src={pfwLogo} alt="PFW logo" className="brand-logo"/>
+            <span>Career Closet</span>
           </NavLink>
         </li>
         <li>
@@ -21,37 +22,7 @@ export default function Navbar() {
           <NavLink to="/build">Build Outfit</NavLink>
         </li>
         <li>
-          <NavLink to="/signin">Sign In</NavLink>
-        </li>
-
-        {/* Right-side logo */}
-        <li>
-          <a
-            href="https://pfw.edu"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              paddingRight: "20px",
-            }}
-          >
-            <img
-              src={pfwLogo}
-              alt="PFW Logo"
-              style={{
-                height: "50px", 
-                width: "50px",
-                transition: "transform 0.2s ease",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.transform = "rotate(30deg)")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.transform = "rotate(0deg)")
-              }
-            />
-          </a>
+          <NavLink to="/signin" className="signIn">Sign In</NavLink>
         </li>
       </ul>
     </nav>

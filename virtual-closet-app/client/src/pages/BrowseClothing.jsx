@@ -74,24 +74,7 @@ export default function BrowseClothing() {
 
   return (
     <>
-      {/* Header / Nav */}
-      <header className="navbar" role="navigation" aria-label="Main">
-        <div className="inner">
-          <a className="brand" href="index.html" aria-label="Career Closet Home">
-            <img className="brand-logo" src="pfw-Logo.svg" alt="Purdue Fort Wayne logo" />
-            <span>Career Closet</span>
-          </a>
-          <nav className="nav" aria-label="Primary">
-            <a href="index.html">Home</a>
-            <a href="browse.html">Browse Closet</a>
-            <a href="appointments.html">Appointments</a>
-            <a href="outfit.html">Build Outfit</a>
-            <a href="about.html">About</a>
-            <a href="sign-in.html">Sign In</a>
-          </nav>
-        </div>
-      </header>
-
+    
       <main className="container">
         <div className="section-head">
           <h1>Browse Available Clothing</h1>
@@ -123,7 +106,7 @@ export default function BrowseClothing() {
         </div>
       </main>
 
-      <footer className="footer"> {year} Career Closet</footer>
+      <footer className="footer">Â© {year} Career Closet</footer>
     </>
   );
 }
