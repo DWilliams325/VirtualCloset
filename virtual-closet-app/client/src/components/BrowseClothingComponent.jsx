@@ -1,4 +1,6 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppointment } from "../context/AppointmentContext";
 
 /** Sidebar with filters (chips + selectors) */
 export function FiltersSidebar({
@@ -176,6 +178,14 @@ export function FiltersSidebar({
 
 /** Individual item card */
 export function ItemCard({ item }) {
+  const navigate = useNavigate();
+  const { addItem } = useAppointment();
+
+  const handleReserve = () => {
+    addItem(item);
+    navigate("/book");
+  };
+
   return (
     <article className="card item-card">
       <div style={{ position: "relative" }}>
@@ -194,8 +204,18 @@ export function ItemCard({ item }) {
           {item.category} · {item.color} · Size {item.size} · #{item.id}
         </p>
         <div className="btn-row">
-          <a className="btn" href="appointments.html">Reserve</a>
-          <a className="btn-outline" href="outfit.html">Add to Outfit</a>
+          <button 
+            className="btn" 
+            onClick={handleReserve}
+            disabled={item.status === "Unavailable"}
+            style={{ 
+              opacity: item.status === "Unavailable" ? 0.5 : 1,
+              cursor: item.status === "Unavailable" ? "not-allowed" : "pointer"
+            }}
+          >
+            Reserve
+          </button>
+          <button className="btn-outline">Add to Outfit</button>
         </div>
       </div>
     </article>

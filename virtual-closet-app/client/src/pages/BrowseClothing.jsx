@@ -74,7 +74,7 @@ export default function BrowseClothing() {
 
   return (
     <>
-
+    
       <main className="container">
         <div className="section-head">
           <h1>Browse Available Clothing</h1>

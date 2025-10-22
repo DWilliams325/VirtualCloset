@@ -1,4 +1,5 @@
-import {Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { AppointmentProvider } from "./context/AppointmentContext";
 import NavBar from "./components/NavBar";         
 import Home from "./pages/Home";                   
 import BrowseClothing from "./pages/BrowseClothing";
@@ -9,18 +10,17 @@ import "./styles/global.css";
 
 export default function App() {
   return (
-      <>
-        <NavBar />
-        <main style={{ padding: "1rem" }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/browse" element={<BrowseClothing />} />
-            <Route path="/book" element={<BookAppointment />} />
-            <Route path="/build" element={<BuildOutfit />} />
-            <Route path="/signin" element={<SignIn />} />
-          </Routes>
-        </main>
-      </>
+    <AppointmentProvider>
+      <NavBar />
+      <main style={{ padding: "1rem" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/browse" element={<BrowseClothing />} />
+          <Route path="/book" element={<BookAppointment />} />
+          <Route path="/build" element={<BuildOutfit />} />
+          <Route path="/signin" element={<SignIn />} />
+        </Routes>
+      </main>
+    </AppointmentProvider>
   );
-
 }
