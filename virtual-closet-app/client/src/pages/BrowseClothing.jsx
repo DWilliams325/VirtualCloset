@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 import "../styles/browse.css";
+import{useNavigate} from "react-router-dom";
+
 import { FiltersSidebar, ItemCard } from "../components/BrowseClothingComponent";
 
 /** Demo data */
@@ -26,6 +28,7 @@ const ITEMS = Array.from({ length: 48 }, (_, i) => {
 });
 
 export default function BrowseClothing() {
+    const navigate =useNavigate();
   const [query, setQuery] = useState("");
   const [availability, setAvailability] = useState("All Items");
   const [selectedCategories, setSelectedCategories] = useState(new Set());
@@ -106,7 +109,26 @@ export default function BrowseClothing() {
         </div>
       </main>
 
-      <footer className="footer">Â© {year} Career Closet</footer>
+     <footer>
+        <div className="footer-content">
+          <h3>
+            Career Closet supporting student success through professional attire
+            and career development resources. A service of the University Career
+            Services Center.
+          </h3>
+
+          <h2>Quick Links</h2>
+          <div className="footer-buttons">
+            <button id="lowerBrowseBtn" onClick={() =>navigate("/browse")}> Browse Clothing</button>
+            <button id="lowerBookBtn" onClick={() =>navigate("/book")} > Book Appointment</button>
+            <button id="lowerBuildBtn"onClick={() =>navigate("/build")}  >Build Outfit</button>
+          </div>
+        </div>
+
+        <p className="copyright">
+          © 2025 University Career Services. All rights reserved.
+        </p>
+      </footer>
     </>
   );
 }

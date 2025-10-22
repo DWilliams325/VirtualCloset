@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useAppointment } from "../context/AppointmentContext";
+import{useNavigate} from "react-router-dom";
 import "../styles/BookAppointment.css";
 
 export default function BookAppointment() {
+    const navigate =useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
@@ -196,6 +198,7 @@ export default function BookAppointment() {
                 ))}
               </div>
             )}
+            
 
             {/* Manual entry option */}
             <div style={{ display: "flex", gap: "8px" }}>
@@ -225,6 +228,22 @@ export default function BookAppointment() {
 
           {success && <p className="success">{success}</p>}
         </form>
+        <footer>
+        <div className="footer-content">
+
+          <h2>Quick Links</h2>
+          <div className="footer-buttons">
+            <button id="lowerBrowseBtn" onClick={() =>navigate("/browse")}> Browse Clothing</button>
+            <button id="lowerBookBtn" onClick={() =>navigate("/book")} > Book Appointment</button>
+            <button id="lowerBuildBtn"onClick={() =>navigate("/build")}  >Build Outfit</button>
+          </div>
+        </div>
+
+        <p className="copyright">
+          © 2025 University Career Services. All rights reserved.
+        </p>
+      </footer>
+        
       </div>
     </section>
   );
