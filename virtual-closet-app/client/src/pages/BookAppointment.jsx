@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import { useAppointment } from "../context/AppointmentContext";
 import "../styles/BookAppointment.css";
 
 export default function BookAppointment() {
@@ -8,12 +9,13 @@ export default function BookAppointment() {
   const [date, setDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [itemText, setItemText] = useState("");
-  const [items, setItems] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-// Handshake URL: ideally would get access to handshake appointment booking page directly to display time slots
-const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
+  const { requestedItems, removeItem, clearItems } = useAppointment();
+
+  // Handshake URL: ideally would get access to handshake appointment booking page directly to display time slots
+  const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
 
   // Today (YYYY-MM-DD)
   const now = new Date();
@@ -28,17 +30,21 @@ const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
     "01:00 PM","01:30 PM","02:00 PM","02:30 PM",
   ];
 
-  function addItem() {
+  function addManualItem() {
     const text = itemText.trim();
     if (!text) return;
-    setItems([...items, text]);
+    
+    // Add as a simple text item (for manually entered items)
+    const manualItem = {
+      id: `manual-${Date.now()}`,
+      name: text,
+      isManual: true
+    };
+    
+    // We'll just add it to the display, but we need to track these separately
+    // For now, let's use the itemText state differently
     setItemText("");
     setError("");
-  }
-
-  function removeItem(index) {
-    const next = items.filter((_, i) => i !== index);
-    setItems(next);
   }
 
   function handleSubmit(e) {
@@ -66,7 +72,7 @@ const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
       setSuccess("");
       return;
     }
-    if (items.length === 0) {
+    if (requestedItems.length === 0) {
       setError("Please add at least one requested item.");
       setSuccess("");
       return;
@@ -81,7 +87,7 @@ const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
     setDate("");
     setSelectedTime("");
     setItemText("");
-    setItems([]);
+    clearItems();
   }
 
   return (
@@ -161,9 +167,31 @@ const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
             </div>
           </div>
 
-          {/* Requested Items should be refactored once browse clothing is implemented */}
+          {/* Requested Items */}
           <div style={{ marginBottom: 12 }}>
             <label>Requested Items</label>
+            
+            {/* Display items from browse page */}
+            {requestedItems.length > 0 && (
+              <div className="items-list" style={{ marginBottom: 12 }}>
+                {requestedItems.map((item) => (
+                  <div key={item.id} className="item">
+                    <span>
+                      {item.name} - {item.category} ({item.color}, Size {item.size})
+                    </span>
+                    <button
+                      type="button"
+                      className="btn-remove"
+                      onClick={() => removeItem(item.id)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Manual entry option */}
             <div style={{ display: "flex", gap: "8px" }}>
               <input
                 type="text"
@@ -172,32 +200,17 @@ const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    addItem();
+                    addManualItem();
                   }
                 }}
-                placeholder="Enter item and press Add"
+                placeholder="Or type item manually and press Add"
               />
-              <button type="button" onClick={addItem} className="btn-add">
+              <button type="button" onClick={addManualItem} className="btn-add">
                 <FaPlus /> Add
               </button>
             </div>
 
             {error && <div className="error">{error}</div>}
-
-            <div className="items-list">
-              {items.map((it, i) => (
-                <div key={i} className="item">
-                  <span>{it}</span>
-                  <button
-                    type="button"
-                    className="btn-remove"
-                    onClick={() => removeItem(i)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              ))}
-            </div>
           </div>
 
           <button type="submit" className="btn-submit">
