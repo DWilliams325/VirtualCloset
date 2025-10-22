@@ -195,3 +195,47 @@ button {
 .or-divider span {
   font-size: 0.9rem;
 }
+/* --- Compact footer inside the form card --- */
+.form-box footer {
+  background: #000;            /* keep the black look */
+  color: #cfb991;              /* gold text */
+  border-radius: 12px;
+  padding: 14px 16px;          /* ↓ was likely large; now tight */
+  margin-top: 16px;
+  text-align: center;
+}
+
+.form-box .footer-content {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.form-box .footer-content h3 {
+  font-size: 0.95rem;          /* ↓ smaller */
+  line-height: 1.35;           /* tighter lines */
+  margin: 0 0 10px;            /* remove big margins */
+  font-weight: 600;
+}
+
+.form-box .footer-content h2 {
+  font-size: 1.05rem;          /* smaller “Quick Links” */
+  margin: 6px 0 10px;
+  font-weight: 700;
+  color: #cfb991;
+}
+
+.form-box .footer-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form-box .footer-buttons button {
+  background: #cfb991;
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;           /* ↓ smaller buttons */
+  font-size: 0.9rem;
+}
