@@ -28,6 +28,7 @@ const ITEMS = Array.from({ length: 48 }, (_, i) => {
 });
 
 export default function BrowseClothing() {
+    const navigate =useNavigate();
   const [query, setQuery] = useState("");
   const [availability, setAvailability] = useState("All Items");
   const [selectedCategories, setSelectedCategories] = useState(new Set());

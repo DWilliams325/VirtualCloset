@@ -4,6 +4,7 @@ import{useNavigate} from "react-router-dom";
 import "../styles/buildOutfit.css"; 
 
 export default function BuildOutfit() { 
+    const navigate =useNavigate();
   const [selectedItems, setSelectedItems] = useState({}); 
   const [activeCategory, setActiveCategory] = useState("tops"); 
 

@@ -5,6 +5,7 @@ import{useNavigate} from "react-router-dom";
 import "../styles/BookAppointment.css";
 
 export default function BookAppointment() {
+    const navigate =useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
