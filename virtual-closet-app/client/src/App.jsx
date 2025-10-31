@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AppointmentProvider } from "./context/AppointmentContext";
-import NavBar from "./components/NavBar";         
+import NavBar from "./components/NavBar";   
+import Footer from "./components/Footer";      
 import Home from "./pages/Home";                   
 import BrowseClothing from "./pages/BrowseClothing";
 import BookAppointment from "./pages/BookAppointment";
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/signin" element={<SignIn />} />
         </Routes>
       </main>
+      <Footer />
     </AppointmentProvider>
   );
 }
