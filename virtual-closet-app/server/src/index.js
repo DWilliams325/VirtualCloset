@@ -92,7 +92,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Health check available at: http://localhost:${PORT}/api/health`);
+  console.log(`API available at: http://localhost:${PORT}/`);
 });
 
 // Graceful shutdown handler
