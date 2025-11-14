@@ -43,12 +43,25 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       health: "/api/health",
-      clothing: "/api/clothing",
+      clothing: {
+        getAll: "GET /api/clothing?userId=virtual-closet-user",
+        getById: "GET /api/clothing/:clothingId",
+      },
       images: {
         syncUrls: "PUT /api/images/sync-urls",
-        missing: "/api/images/missing",
+        missing: "GET /api/images/missing?userId=virtual-closet-user",
       },
     },
+    users: {
+      default: "virtual-closet-user (1,033 items)",
+      test: "test-user-123 (0 items)",
+    },
+    quickTests: [
+      "GET /api/health",
+      "GET /api/clothing?userId=virtual-closet-user",
+      "GET /api/clothing/1001",
+      "GET /api/images/missing?userId=virtual-closet-user&limit=5",
+    ],
   });
 });
 
