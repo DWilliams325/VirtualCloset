@@ -6,9 +6,6 @@
 # Dependencies
 node_modules/
 
-# Uploads (temporary CSV files)
-uploads/
-
 # Logs
 logs
 *.log
