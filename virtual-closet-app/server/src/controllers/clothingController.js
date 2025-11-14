@@ -1,4 +1,3 @@
-import ClothingItem from "../models/ClothingItem.js";
 import * as clothingService from "../services/clothingService.js";
 
 /**

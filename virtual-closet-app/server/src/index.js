@@ -1,11 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { connectDB } from "./config/database.js";
-import ClothingItem from "./models/ClothingItem.js";
 
 // Import routes
 import clothingRoutes from "./routes/clothing.js";
@@ -47,7 +45,6 @@ app.get("/", (req, res) => {
       health: "/api/health",
       clothing: "/api/clothing",
       images: {
-        metadataTest: "/api/images/metadata-test",
         syncUrls: "PUT /api/images/sync-urls",
         missing: "/api/images/missing",
       },

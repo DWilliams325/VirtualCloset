@@ -3,22 +3,17 @@ import * as imageController from "../controllers/imageController.js";
 
 const router = express.Router();
 
-// Test image metadata - returns sample items with image URL format
-router.get("/metadata-test", async (req, res) => {
+// Get items missing images
+router.get("/missing", async (req, res) => {
   try {
     const userId = req.query.userId || "test-user-123";
-    const limit = parseInt(req.query.limit) || 10;
-    const bucketName = req.query.bucketName || "virtual-closet-images";
+    const limit = parseInt(req.query.limit) || 50;
 
-    const result = await imageController.getImageMetadataTest(
-      userId,
-      limit,
-      bucketName
-    );
+    const result = await imageController.getItemsMissingImages(userId, limit);
     res.json(result);
   } catch (error) {
     res.status(500).json({
-      error: "Failed to fetch image metadata",
+      error: "Failed to fetch items missing images",
       message: error.message,
     });
   }
@@ -45,22 +40,6 @@ router.put("/sync-urls", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to sync image URLs",
-      message: error.message,
-    });
-  }
-});
-
-// Get items missing images
-router.get("/missing", async (req, res) => {
-  try {
-    const userId = req.query.userId || "test-user-123";
-    const limit = parseInt(req.query.limit) || 50;
-
-    const result = await imageController.getItemsMissingImages(userId, limit);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({
-      error: "Failed to fetch items missing images",
       message: error.message,
     });
   }

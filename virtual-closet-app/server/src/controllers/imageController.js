@@ -1,45 +1,21 @@
-import ClothingItem from "../models/ClothingItem.js";
 import * as clothingService from "../services/clothingService.js";
 
 /**
- * Get image metadata test - preview how URLs would look
+ * Get items missing images
  */
-export async function getImageMetadataTest(userId, limit, bucketName) {
-  const items = await clothingService.findByUserId(userId, limit);
-
-  const baseUrl = "https://storage.googleapis.com/" + bucketName;
-
-  // Transform items to show current and proposed URLs
-  const itemsWithImageUrls = items.map((item) => ({
-    clothingId: item.clothingId,
-    name: item.name,
-    category: item.category,
-    subcategory: item.subcategory,
-    gender: item.gender,
-    size: item.size,
-    currentImageUrl: item.imageUrl || "(empty)",
-    proposedImageUrl: baseUrl + "/" + item.clothingId + ".jpg",
-    metadata: {
-      hasImage: !!item.imageUrl,
-      needsUpdate: !item.imageUrl,
-    },
-  }));
-
-  // Calculate statistics
-  const stats = {
-    totalItems: items.length,
-    itemsWithImages: items.filter((item) => item.imageUrl).length,
-    itemsWithoutImages: items.filter((item) => !item.imageUrl).length,
-  };
+export async function getItemsMissingImages(userId, limit) {
+  const itemsWithoutImages = await clothingService.findItemsWithoutImages(
+    userId,
+    limit
+  );
+  const totalMissing = await clothingService.countItemsWithoutImages(userId);
 
   return {
     success: true,
-    message: "Image metadata test - showing how URLs would be structured",
-    bucketName: bucketName,
-    baseUrl: baseUrl,
-    stats: stats,
-    sampleItems: itemsWithImageUrls,
-    note: "proposedImageUrl shows what the URL would be if images are named by clothingId",
+    totalMissing: totalMissing,
+    showing: itemsWithoutImages.length,
+    items: itemsWithoutImages,
+    message: `${totalMissing} items are missing image URLs`,
   };
 }
 
@@ -48,7 +24,7 @@ export async function getImageMetadataTest(userId, limit, bucketName) {
  */
 export async function syncImageUrls(options) {
   const { bucketName, imageExtension, userId, dryRun } = options;
-  const baseUrl = "https://storage.googleapis.com/" + bucketName;
+  const baseUrl = `https://storage.googleapis.com/${bucketName}`;
 
   // Get items to update
   const items = await clothingService.findByUserId(userId);
@@ -66,7 +42,7 @@ export async function syncImageUrls(options) {
     const preview = items.slice(0, 10).map((item) => ({
       clothingId: item.clothingId,
       currentUrl: item.imageUrl || "(empty)",
-      newUrl: baseUrl + "/" + item.clothingId + "." + imageExtension,
+      newUrl: `${baseUrl}/${item.clothingId}.${imageExtension}`,
     }));
 
     return {
@@ -79,8 +55,7 @@ export async function syncImageUrls(options) {
   }
 
   // Perform actual sync
-  const imageUrl = (clothingId) =>
-    baseUrl + "/" + clothingId + "." + imageExtension;
+  const imageUrl = (clothingId) => `${baseUrl}/${clothingId}.${imageExtension}`;
   await clothingService.bulkUpdateImageUrls(items, imageUrl);
 
   // Get updated statistics
@@ -95,25 +70,6 @@ export async function syncImageUrls(options) {
     totalItems: items.length,
     itemsUpdated: items.length,
     itemsWithImages: itemsWithImages,
-    pattern: baseUrl + "/{clothingId}." + imageExtension,
-  };
-}
-
-/**
- * Get items missing images
- */
-export async function getItemsMissingImages(userId, limit) {
-  const itemsWithoutImages = await clothingService.findItemsWithoutImages(
-    userId,
-    limit
-  );
-  const totalMissing = await clothingService.countItemsWithoutImages(userId);
-
-  return {
-    success: true,
-    totalMissing: totalMissing,
-    showing: itemsWithoutImages.length,
-    items: itemsWithoutImages,
-    message: totalMissing + " items are missing image URLs",
+    pattern: `${baseUrl}/{clothingId}.${imageExtension}`,
   };
 }
