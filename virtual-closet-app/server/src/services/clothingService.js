@@ -67,3 +67,21 @@ export async function bulkUpdateImageUrls(items, generateImageUrl) {
 
   return await ClothingItem.bulkWrite(bulkOps);
 }
+
+/**
+ * Update a clothing item by clothingId
+ */
+export async function updateByClothingId(clothingId, updates) {
+  return await ClothingItem.findOneAndUpdate(
+    { clothingId: clothingId },
+    { $set: updates },
+    { new: true, runValidators: true }
+  );
+}
+
+/**
+ * Delete a clothing item by clothingId
+ */
+export async function deleteByClothingId(clothingId) {
+  return await ClothingItem.findOneAndDelete({ clothingId: clothingId });
+}
