@@ -189,7 +189,7 @@ export function ItemCard({ item }) {
   };
 
   const handleAddToOutfit = () => {
-    addToOutfit(item.category.toLowerCase(), item);
+    addToOutfit(item.category?.toLowerCase(), item);
   };
 
   return (
@@ -197,7 +197,7 @@ export function ItemCard({ item }) {
       <div style={{ position: "relative" }}>
         <img
           className="item-thumb-img"
-          src={item.img}
+          src={item.signedUrl || item.img}
           alt={`${item.name}, ${item.color}, size ${item.size}`}
         />
         <span className={`badge-chip ${item.status === "Unavailable" ? "unavailable" : ""}`}>
@@ -207,21 +207,21 @@ export function ItemCard({ item }) {
       <div className="item-body">
         <h3 className="item-title">{item.name}</h3>
         <p className="meta">
-          {item.category} · {item.color} · Size {item.size} · #{item.id}
+          {item.category} · {item.color} · Size {item.size} · #{item.clothingId || item.id}
         </p>
         <div className="btn-row">
-          <button 
-            className="btn" 
+          <button
+            className="btn"
             onClick={handleReserve}
             disabled={item.status === "Unavailable"}
-            style={{ 
+            style={{
               opacity: item.status === "Unavailable" ? 0.5 : 1,
               cursor: item.status === "Unavailable" ? "not-allowed" : "pointer"
             }}
           >
             Reserve
           </button>
-          <button 
+          <button
             className="btn-outline"
             onClick={handleAddToOutfit}
             disabled={item.status === "Unavailable"}
