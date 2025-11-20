@@ -20,7 +20,7 @@ export async function getAllItems(userId, page = 1, limit = 10) {
         // Derive thumbnail paths based on naming convention
         const baseName = item.imageUrl.split('/').pop().replace(/\.[^.]+$/, '');
         const webpPath = `Thumbnails-webp/${baseName}.webp`;
-        const jpgPath = `thumbnails/${baseName}.JPG`;
+        const jpgPath = `Thumbnails/${baseName}.JPG`;
         // Only set the URL if the file exists (signed URL is valid)
         try {
           const webpUrl = await getSignedUrl(webpPath);
@@ -69,7 +69,7 @@ export async function getItemById(clothingId) {
   if (item.imageUrl) {
     const baseName = item.imageUrl.split('/').pop().replace(/\.[^.]+$/, '');
     const webpPath = `Thumbnails-webp/${baseName}.webp`;
-    const jpgPath = `thumbnails/${baseName}.JPG`;
+    const jpgPath = `Thumbnails/${baseName}.JPG`;
     try {
       const webpUrl = await getSignedUrl(webpPath);
       thumbnailWebpUrl = webpUrl && typeof webpUrl === 'string' && webpUrl.includes('googleapis.com') ? webpUrl : null;
