@@ -1,3 +1,7 @@
+// AI-Assisted Code Notice:
+/* AI was used to design the advanced React patterns, improve code clarity, and optimize performance for 
+    image rendering and filtering. */
+    
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppointment } from "../context/AppointmentContext";
@@ -195,11 +199,23 @@ export function ItemCard({ item }) {
   return (
     <article className="card item-card">
       <div style={{ position: "relative" }}>
-        <img
-          className="item-thumb-img"
-          src={item.signedUrl || item.img}
-          alt={`${item.name}, ${item.color}, size ${item.size}`}
-        />
+        <picture>
+          {item.thumbnailWebpUrl && (
+            <source srcSet={item.thumbnailWebpUrl} type="image/webp" />
+          )}
+          {item.thumbnailJpgUrl && (
+            <source srcSet={item.thumbnailJpgUrl} type="image/jpeg" />
+          )}
+          <img
+            className="item-thumb-img"
+            src={item.thumbnailJpgUrl || item.thumbnailWebpUrl || item.thumbnailSignedUrl || item.thumbnailUrl || item.signedUrl || item.img}
+            alt={`${item.name}, ${item.color}, size ${item.size}`}
+            width={300}
+            height={300}
+            style={{ objectFit: 'cover', background: '#f4f4f4' }}
+            loading="lazy"
+          />
+        </picture>
         <span className={`badge-chip ${item.status === "Unavailable" ? "unavailable" : ""}`}>
           {item.status}
         </span>

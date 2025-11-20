@@ -1,7 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
 
-// Configure your GCS bucket name and credentials
+// Configure GCS bucket name and credentials
 const BUCKET_NAME = process.env.GCS_BUCKET_NAME || "pfw-virtual-close";
 const storage = new Storage({
   keyFilename: process.env.GCS_CREDENTIALS || path.resolve("gcs-credentials.json"),

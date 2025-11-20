@@ -4,21 +4,41 @@ import { getSignedUrl } from "../services/gcsService.js";
 /**
  * Get all clothing items for a user
  */
-export async function getAllItems(userId) {
-  const items = await clothingService.findByUserId(userId);
+export async function getAllItems(userId, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+  const [items, total] = await Promise.all([
+    clothingService.findByUserId(userId, limit, skip),
+    clothingService.countByUserId(userId),
+  ]);
   // Attach signed URLs for each item (if imageUrl exists)
   const itemsWithSignedUrls = await Promise.all(
     items.map(async (item) => {
+      // Assume imageUrl is like 'originals/IMG_1234.JPG'
+      let thumbnailWebpUrl = null;
+      let thumbnailJpgUrl = null;
+      if (item.imageUrl) {
+        // Derive thumbnail paths based on naming convention
+        const baseName = item.imageUrl.split('/').pop().replace(/\.[^.]+$/, '');
+        const webpPath = `Thumbnails-webp/${baseName}.webp`;
+        const jpgPath = `thumbnails/${baseName}.JPG`;
+        thumbnailWebpUrl = await getSignedUrl(webpPath);
+        thumbnailJpgUrl = await getSignedUrl(jpgPath);
+      }
       const signedUrl = item.imageUrl ? await getSignedUrl(item.imageUrl) : null;
       return {
         ...item.toObject(),
         signedUrl,
+        thumbnailWebpUrl,
+        thumbnailJpgUrl,
       };
     })
   );
   return {
     success: true,
     count: itemsWithSignedUrls.length,
+    total,
+    page,
+    limit,
     items: itemsWithSignedUrls,
   };
 }
@@ -33,12 +53,23 @@ export async function getItemById(clothingId) {
     error.status = 404;
     throw error;
   }
+  let thumbnailWebpUrl = null;
+  let thumbnailJpgUrl = null;
+  if (item.imageUrl) {
+    const baseName = item.imageUrl.split('/').pop().replace(/\.[^.]+$/, '');
+    const webpPath = `Thumbnails-webp/${baseName}.webp`;
+    const jpgPath = `thumbnails/${baseName}.JPG`;
+    thumbnailWebpUrl = await getSignedUrl(webpPath);
+    thumbnailJpgUrl = await getSignedUrl(jpgPath);
+  }
   const signedUrl = item.imageUrl ? await getSignedUrl(item.imageUrl) : null;
   return {
     success: true,
     item: {
       ...item.toObject(),
       signedUrl,
+      thumbnailWebpUrl,
+      thumbnailJpgUrl,
     },
   };
 }
