@@ -26,3 +26,4 @@ dist-ssr
 VirtualClosetPhotos/
 
 .env
+virtual-closet-app/server/gcs-credentials.json
