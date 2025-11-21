@@ -90,19 +90,3 @@ async function startServer() {
 }
 
 startServer();
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`API available at: http://localhost:${PORT}/`);
-});
-
-// Graceful shutdown handler
-process.on("SIGTERM", () => {
-  console.log("SIGTERM signal received: closing HTTP server");
-  server.close(() => {
-    console.log("HTTP server closed");
-  });
-});
-
-
