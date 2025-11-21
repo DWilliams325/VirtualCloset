@@ -3,7 +3,6 @@ import express from "express";
 import connectDB from "./config/database.js";
 import clothingRoutes from "./routes/clothing.js";
 import imageRoutes from "./routes/images.js";
-import adminRoutes from "./routes/admin.js";
 
 const app = express();
 const PORT = 5001;
@@ -53,23 +52,13 @@ async function startServer() {
           "GET /api/clothing?userId=virtual-closet-user",
           "GET /api/clothing/1001",
           "GET /api/images/missing?userId=virtual-closet-user&limit=5",
-          "GET /api/admin/stats",
         ],
-        admin: {
-          clothing: "GET /api/admin/clothing?page=1&limit=50",
-          update: "PUT /api/admin/clothing/:clothingId",
-          delete: "DELETE /api/admin/clothing/:clothingId",
-          stats: "GET /api/admin/stats",
-          exportCSV: "GET /api/admin/export/csv",
-          exportJSON: "GET /api/admin/export/json",
-        },
       });
     });
 
     // Mount routes
     app.use("/api/clothing", clothingRoutes);
     app.use("/api/images", imageRoutes);
-    app.use("/api/admin", adminRoutes);
 
     // 404 handler - catches all undefined routes
     app.use((req, res) => {
