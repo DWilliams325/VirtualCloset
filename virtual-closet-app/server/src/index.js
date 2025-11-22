@@ -3,7 +3,7 @@ import express from "express";
 import connectDB from "./config/database.js";
 import clothingRoutes from "./routes/clothing.js";
 import imageRoutes from "./routes/images.js";
-
+import appointmentRoutes from "./routes/appointments.js";
 const app = express();
 const PORT = 5001;
 
@@ -14,6 +14,7 @@ async function startServer() {
     // Connect to MongoDB
     await connectDB();
     console.log("MongoDB connected successfully");
+
 
     app.use(express.json());
 
@@ -42,6 +43,16 @@ async function startServer() {
             syncUrls: "PUT /api/images/sync-urls",
             missing: "GET /api/images/missing?userId=virtual-closet-user",
           },
+          appointments: {
+            getAll: "GET /api/appointments",
+            getById: "GET /api/appointments/:id",
+            create: "POST /api/appointments",
+            update: "PUT /api/appointments/:id",
+            cancel: "PATCH /api/appointments/:id/cancel",
+            delete: "DELETE /api/appointments/:id",
+            availableSlots: "GET /api/appointments/available-slots?date=2025-11-22",
+            blockSlot: "POST /api/appointments/admin/block",
+          },
         },
         users: {
           default: "virtual-closet-user (1,033 items)",
@@ -51,7 +62,8 @@ async function startServer() {
           "GET /api/health",
           "GET /api/clothing?userId=virtual-closet-user",
           "GET /api/clothing/1001",
-          "GET /api/images/missing?userId=virtual-closet-user&limit=5",
+          "GET /api/appointments",
+          "GET /api/appointments/available-slots?date=2025-11-22",
         ],
       });
     });
@@ -59,6 +71,7 @@ async function startServer() {
     // Mount routes
     app.use("/api/clothing", clothingRoutes);
     app.use("/api/images", imageRoutes);
+    app.use("/api/appointments", appointmentRoutes);
 
     // 404 handler - catches all undefined routes
     app.use((req, res) => {
