@@ -253,12 +253,29 @@ export async function getAvailableSlots(req, res) {
       });
     }
 
+    // Check if date is a weekday (Monday-Friday)
+    const selectedDate = new Date(date);
+    const dayOfWeek = selectedDate.getDay();
+    
+    // Return empty slots for weekends (0 = Sunday, 6 = Saturday)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return res.json({
+        success: true,
+        data: {
+          date,
+          availableSlots: [],
+          bookedSlots: [],
+        }
+      });
+    }
+
     const bookedSlots = await Appointment.findAvailableSlots(date);
 
-    // Define available hours (e.g., 9 AM - 5 PM)
+    // Define available hours 9 AM - 5 PM Monday-Friday (30 min slots)
     const businessHours = [
-      "09:00", "09:45", "10:30", "11:15",
-      "13:00", "13:45", "14:30", "15:15", "16:00"
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+      "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+      "15:00", "15:30", "16:00", "16:30", "17:00"
     ];
 
     const bookedTimes = bookedSlots.map(slot => slot.time);
@@ -266,9 +283,11 @@ export async function getAvailableSlots(req, res) {
 
     res.json({
       success: true,
-      date,
-      availableSlots,
-      bookedSlots: bookedTimes,
+      data: {
+        date,
+        availableSlots,
+        bookedSlots: bookedTimes,
+      }
     });
   } catch (error) {
     console.error("Error fetching available slots:", error);

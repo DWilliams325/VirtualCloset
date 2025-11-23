@@ -1,301 +1,390 @@
-import { useState } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useAppointment } from "../context/AppointmentContext";
-import { useNavigate } from "react-router-dom";
 import "../styles/BookAppointment.css";
 
 export default function BookAppointment({ userEmail }) {
-  const navigate = useNavigate();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [date, setDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [itemText, setItemText] = useState("");
+  const [email, setEmail] = useState(userEmail || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [bookedSlots, setBookedSlots] = useState([]);
 
-  const { requestedItems, addItem, removeItem, clearItems } = useAppointment();
-
-  // Handshake URL
-  const HANDSHAKE_URL = "https://app.joinhandshake.com/stu/appointments/new";
-
-  // Today (YYYY-MM-DD)
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
-  const dd = String(now.getDate()).padStart(2, "0");
-  const todayStr = `${yyyy}-${mm}-${dd}`;
-
-  // Available time slots
-  const TIME_SLOTS = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM",
-    "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
-  ];
-
-  function addManualItem() {
-    const text = itemText.trim();
-    if (!text) return;
-
-    // Create manual item and add to context
-    const manualItem = {
-      id: `manual-${Date.now()}`,
-      name: text,
-      category: "Manual Entry",
-      color: "",
-      size: "",
-      isManual: true
-    };
-
-    addItem(manualItem);
-    setItemText("");
-    setError("");
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    // Basic validation
-    if (!name.trim()) {
-      setError("Please enter your name.");
-      setSuccess("");
-      return;
-    }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Please enter a valid email address.");
-      setSuccess("");
-      return;
-    }
-    if (!date) {
-      setError("Please select a day for your appointment.");
-      setSuccess("");
-      return;
-    }
-    if (!selectedTime) {
-      setError("Please pick a time slot.");
-      setSuccess("");
-      return;
-    }
-    if (requestedItems.length === 0) {
-      setError("Please add at least one requested item.");
-      setSuccess("");
-      return;
-    }
-
-    setSuccess(`Appointment booked for ${name} on ${date} at ${selectedTime}!`);
-    setError("");
-
-    // reset
-    setName("");
-    setEmail("");
-    setDate("");
-    setSelectedTime("");
-    setItemText("");
-    clearItems();
-  }
-
+  const { requestedItems } = useAppointment();
   const isAdmin = userEmail && userEmail.toLowerCase() === "admin@pfw.edu";
+
+  // Admin view state
   const [appointments, setAppointments] = useState([]);
   const [showAppointments, setShowAppointments] = useState(false);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
-  const [errorAppointments, setErrorAppointments] = useState("");
 
-  function fetchAppointments() {
-    setLoadingAppointments(true);
-    setErrorAppointments("");
-    fetch("http://localhost:5001/api/appointments")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setAppointments(data.data);
-        } else {
-          setErrorAppointments(data.error || "Failed to fetch appointments.");
-        }
-        setLoadingAppointments(false);
-      })
-      .catch((err) => {
-        setErrorAppointments("Failed to fetch appointments.");
-        setLoadingAppointments(false);
+  // Generate calendar days
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    const days = [];
+
+    // Add empty slots for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+
+    // Add all days in month
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day));
+    }
+
+    return days;
+  };
+
+  // Navigate months
+  const previousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+    setSelectedDate(null);
+    setSelectedTime(null);
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+    setSelectedDate(null);
+    setSelectedTime(null);
+  };
+
+  // Fetch available slots when a date is selected
+  useEffect(() => {
+    if (selectedDate) {
+      fetchAvailableSlots(selectedDate);
+    }
+  }, [selectedDate]);
+
+  const fetchAvailableSlots = async (date) => {
+    setLoadingSlots(true);
+    const dateStr = date.toISOString().split('T')[0];
+
+    try {
+      const response = await fetch(`http://localhost:5001/api/appointments/available-slots?date=${dateStr}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setAvailableSlots(data.data.availableSlots || []);
+        setBookedSlots(data.data.bookedSlots || []);
+      }
+    } catch (err) {
+      console.error("Error fetching slots:", err);
+      setAvailableSlots([]);
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  const handleDateClick = (date) => {
+    if (!date) return;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return; // Prevent selecting past dates
+
+    setSelectedDate(date);
+    setSelectedTime(null);
+    setError("");
+  };
+
+  const handleTimeClick = (time) => {
+    setSelectedTime(time);
+    setError("");
+  };
+
+  const handleBookAppointment = async (e) => {
+    e.preventDefault();
+
+    if (!name.trim()) {
+      setError("Please enter your name.");
+      return;
+    }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!selectedDate) {
+      setError("Please select a date.");
+      return;
+    }
+    if (!selectedTime) {
+      setError("Please select a time slot.");
+      return;
+    }
+
+    const appointmentData = {
+      userId: email,
+      userName: name,
+      userEmail: email,
+      date: selectedDate.toISOString().split('T')[0],
+      time: selectedTime,
+      requestedItems: requestedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        color: item.color,
+        size: item.size
+      })),
+      notes: ""
+    };
+
+    try {
+      const response = await fetch("http://localhost:5001/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(appointmentData)
       });
-  }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess("Appointment booked successfully!");
+        setError("");
+        setName("");
+        setEmail("");
+        setSelectedDate(null);
+        setSelectedTime(null);
+
+        // Refresh available slots
+        if (selectedDate) {
+          fetchAvailableSlots(selectedDate);
+        }
+      } else {
+        setError(data.error || "Failed to book appointment.");
+      }
+    } catch (err) {
+      setError("Failed to book appointment. Please try again.");
+    }
+  };
+
+  const fetchAppointments = async () => {
+    setLoadingAppointments(true);
+    try {
+      const response = await fetch("http://localhost:5001/api/appointments");
+      const data = await response.json();
+
+      if (data.success) {
+        setAppointments(data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching appointments:", err);
+    } finally {
+      setLoadingAppointments(false);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  // Convert 24-hour time to 12-hour EST format
+  const formatTime = (time24) => {
+    if (!time24) return "";
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${hour12}:${minutes} ${ampm} EST`;
+  };
+
+  const isToday = (date) => {
+    if (!date) return false;
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const isSelected = (date) => {
+    if (!date || !selectedDate) return false;
+    return date.toDateString() === selectedDate.toDateString();
+  };
+
+  const days = getDaysInMonth(currentMonth);
+  const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   return (
-    <section className="app-container">
-      <div className="form-box">
-        <h1>Book Appointment</h1>
-        {isAdmin && (
-          <>
-            <button
-              className="admin-btn"
-              style={{marginBottom:16,background:'#cfb991',color:'#111',fontWeight:700,padding:'10px 18px',borderRadius:8,border:'none',cursor:'pointer'}}
-              onClick={() => {
-                setShowAppointments((show) => !show);
-                if (!showAppointments) fetchAppointments();
-              }}
-            >
-              {showAppointments ? "Hide Appointments" : "View All Appointments"}
-            </button>
-            {showAppointments && (
-              <div style={{marginBottom:24}}>
-                {loadingAppointments ? (
-                  <div>Loading appointments...</div>
-                ) : errorAppointments ? (
-                  <div style={{color:'red'}}>{errorAppointments}</div>
-                ) : appointments.length === 0 ? (
-                  <div>No appointments found.</div>
-                ) : (
-                  <table style={{width:'100%',borderCollapse:'collapse',marginTop:8}}>
-                    <thead>
-                      <tr style={{background:'#eee'}}>
-                        <th style={{border:'1px solid #ccc',padding:'6px'}}>Name</th>
-                        <th style={{border:'1px solid #ccc',padding:'6px'}}>Email</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {appointments.map((appt) => (
-                        <tr key={appt._id}>
-                          <td style={{border:'1px solid #ccc',padding:'6px'}}>{appt.userName || appt.name || appt.studentName || ""}</td>
-                          <td style={{border:'1px solid #ccc',padding:'6px'}}>{appt.userEmail || appt.email || appt.studentEmail || ""}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Handshake booking */}
-        <div className="handshake-cta">
-          <p>Prefer to book directly on Handshake?</p>
-          <a
-            className="btn-handshake"
-            href={HANDSHAKE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="appointment-page">
+      {isAdmin && (
+        <div className="admin-section">
+          <button
+            className="admin-btn"
+            onClick={() => {
+              setShowAppointments(!showAppointments);
+              if (!showAppointments) fetchAppointments();
+            }}
           >
-            Continue on Handshake
-          </a>
-        </div>
-
-        {/* Divider */}
-        <div className="or-divider">
-          <span>or</span>
-        </div>
-
-        {/* Local form as backup */}
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 12 }}>
-            <label>Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="Jane Doe"
-            />
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="jane@example.com"
-            />
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label>Choose a date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-              min={todayStr}
-            />
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label>Choose a time</label>
-            <div className="slots-grid">
-              {TIME_SLOTS.map((t) => {
-                const isSelected = selectedTime === t;
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`slot-btn ${isSelected ? "slot-selected" : ""}`}
-                    onClick={() => setSelectedTime(t)}
-                  >
-                    {t}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Requested Items */}
-          <div style={{ marginBottom: 12 }}>
-            <label>Requested Items</label>
-
-            {/* Display items from browse page */}
-            {requestedItems.length > 0 && (
-              <div className="items-list" style={{ marginBottom: 12 }}>
-                {requestedItems.map((item) => (
-                  <div key={item.id} className="item">
-                    <span>
-                      {item.isManual ? (
-                        item.name
-                      ) : (
-                        `${item.name} - ${item.category} (${item.color}, Size ${item.size})`
-                      )}
-                    </span>
-                    <button
-                      type="button"
-                      className="btn-remove"
-                      onClick={() => removeItem(item.id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-
-            {/* Manual entry option */}
-            <div style={{ display: "flex", gap: "8px" }}>
-              <input
-                type="text"
-                value={itemText}
-                onChange={(e) => setItemText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addManualItem();
-                  }
-                }}
-                placeholder="Or type item manually and press Add"
-              />
-              <button type="button" onClick={addManualItem} className="btn-add">
-                <FaPlus /> Add
-              </button>
-            </div>
-
-            {error && <div className="error">{error}</div>}
-          </div>
-
-          <button type="submit" className="btn-submit">
-            Book Appointment
+            {showAppointments ? "Hide Appointments" : "View All Appointments"}
           </button>
 
-          {success && <p className="success">{success}</p>}
-        </form>
+          {showAppointments && (
+            <div className="appointments-table">
+              {loadingAppointments ? (
+                <div>Loading...</div>
+              ) : appointments.length === 0 ? (
+                <div>No appointments found.</div>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments.map((appt) => (
+                      <tr key={appt._id}>
+                        <td>{appt.userName}</td>
+                        <td>{appt.userEmail}</td>
+                        <td>{appt.date}</td>
+                        <td>{appt.time}</td>
+                        <td>{appt.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="appointment-container">
+        <div className="appointment-header">
+          <h1>Book Career Closet Appointment</h1>
+          <p className="appointment-subtitle">30 min appointments • In-person consultation</p>
+        </div>
+
+        <div className="appointment-content">
+          {/* Calendar Section */}
+          <div className="calendar-section">
+            <h2>Select an appointment time</h2>
+
+            <div className="calendar">
+              <div className="calendar-header">
+                <button onClick={previousMonth} className="nav-btn">
+                  <FaChevronLeft />
+                </button>
+                <span className="month-name">{monthName}</span>
+                <button onClick={nextMonth} className="nav-btn">
+                  <FaChevronRight />
+                </button>
+              </div>
+
+              <div className="calendar-grid">
+                <div className="weekday-header">S</div>
+                <div className="weekday-header">M</div>
+                <div className="weekday-header">T</div>
+                <div className="weekday-header">W</div>
+                <div className="weekday-header">T</div>
+                <div className="weekday-header">F</div>
+                <div className="weekday-header">S</div>
+
+                {days.map((date, index) => (
+                  <button
+                    key={index}
+                    className={`calendar-day ${!date ? 'empty' : ''} ${isToday(date) ? 'today' : ''} ${isSelected(date) ? 'selected' : ''}`}
+                    onClick={() => handleDateClick(date)}
+                    disabled={!date || date < new Date().setHours(0, 0, 0, 0)}
+                  >
+                    {date ? date.getDate() : ''}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Time Slots Section */}
+          <div className="slots-section">
+            {selectedDate ? (
+              <>
+                <h3>{formatDate(selectedDate)}</h3>
+
+                {loadingSlots ? (
+                  <div className="loading">Loading available slots...</div>
+                ) : availableSlots.length === 0 ? (
+                  <div className="no-slots">No available slots for this date.</div>
+                ) : (
+                  <div className="time-slots-grid">
+                    {availableSlots.map((slot) => (
+                      <button
+                        key={slot}
+                        className={`time-slot ${selectedTime === slot ? 'selected' : ''}`}
+                        onClick={() => handleTimeClick(slot)}
+                      >
+                        {formatTime(slot)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {selectedTime && (
+                  <form className="booking-form" onSubmit={handleBookAppointment}>
+                    <h3>Confirm your details</h3>
+
+                    <div className="form-field">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your full name"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-field">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@pfw.edu"
+                        required
+                      />
+                    </div>
+
+                    {requestedItems.length > 0 && (
+                      <div className="requested-items-summary">
+                        <strong>Requested Items:</strong>
+                        <ul>
+                          {requestedItems.map(item => (
+                            <li key={item.id}>{item.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {error && <div className="error-message">{error}</div>}
+                    {success && <div className="success-message">{success}</div>}
+
+                    <button type="submit" className="book-btn">
+                      Confirm Appointment
+                    </button>
+                  </form>
+                )}
+              </>
+            ) : (
+              <div className="select-date-prompt">
+                <p>Select a date from the calendar to view available time slots</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
