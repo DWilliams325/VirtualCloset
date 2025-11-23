@@ -5,7 +5,7 @@ import "../styles/SignIn.css";
 
 const isPFWEmail = (v) => /^[^\s@]+@pfw\.edu$/i.test((v || "").trim());
 
-export default function SignIn() {
+export default function SignIn({ onLogin, loggedIn }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -14,7 +14,6 @@ export default function SignIn() {
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
 
   // if you stored a pathname in location.state, prefer that; otherwise fall back
   const from =
@@ -34,8 +33,11 @@ export default function SignIn() {
       setError("Use your PFW email address (e.g., username@pfw.edu).");
       return;
     }
-    setLoggedIn(true);
     setLoading(false);
+    if (onLogin) {
+      onLogin(trimmedEmail);
+      navigate(from, { replace: true });
+    }
   }
 
   const emailInvalid = email.length > 0 && !isPFWEmail(email);

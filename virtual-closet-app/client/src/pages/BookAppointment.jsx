@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useAppointment } from "../context/AppointmentContext";
-import{useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/BookAppointment.css";
 
-export default function BookAppointment() {
-    const navigate =useNavigate();
+export default function BookAppointment({ userEmail }) {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
@@ -28,14 +28,14 @@ export default function BookAppointment() {
 
   // Available time slots
   const TIME_SLOTS = [
-    "09:00 AM","09:30 AM","10:00 AM","10:30 AM","11:00 AM",
-    "01:00 PM","01:30 PM","02:00 PM","02:30 PM",
+    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM",
+    "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
   ];
 
   function addManualItem() {
     const text = itemText.trim();
     if (!text) return;
-    
+
     // Create manual item and add to context
     const manualItem = {
       id: `manual-${Date.now()}`,
@@ -45,7 +45,7 @@ export default function BookAppointment() {
       size: "",
       isManual: true
     };
-    
+
     addItem(manualItem);
     setItemText("");
     setError("");
@@ -94,10 +94,77 @@ export default function BookAppointment() {
     clearItems();
   }
 
+  const isAdmin = userEmail && userEmail.toLowerCase() === "admin@pfw.edu";
+  const [appointments, setAppointments] = useState([]);
+  const [showAppointments, setShowAppointments] = useState(false);
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
+  const [errorAppointments, setErrorAppointments] = useState("");
+
+  function fetchAppointments() {
+    setLoadingAppointments(true);
+    setErrorAppointments("");
+    fetch("http://localhost:5001/api/appointments")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setAppointments(data.data);
+        } else {
+          setErrorAppointments(data.error || "Failed to fetch appointments.");
+        }
+        setLoadingAppointments(false);
+      })
+      .catch((err) => {
+        setErrorAppointments("Failed to fetch appointments.");
+        setLoadingAppointments(false);
+      });
+  }
+
   return (
     <section className="app-container">
       <div className="form-box">
         <h1>Book Appointment</h1>
+        {isAdmin && (
+          <>
+            <button
+              className="admin-btn"
+              style={{marginBottom:16,background:'#cfb991',color:'#111',fontWeight:700,padding:'10px 18px',borderRadius:8,border:'none',cursor:'pointer'}}
+              onClick={() => {
+                setShowAppointments((show) => !show);
+                if (!showAppointments) fetchAppointments();
+              }}
+            >
+              {showAppointments ? "Hide Appointments" : "View All Appointments"}
+            </button>
+            {showAppointments && (
+              <div style={{marginBottom:24}}>
+                {loadingAppointments ? (
+                  <div>Loading appointments...</div>
+                ) : errorAppointments ? (
+                  <div style={{color:'red'}}>{errorAppointments}</div>
+                ) : appointments.length === 0 ? (
+                  <div>No appointments found.</div>
+                ) : (
+                  <table style={{width:'100%',borderCollapse:'collapse',marginTop:8}}>
+                    <thead>
+                      <tr style={{background:'#eee'}}>
+                        <th style={{border:'1px solid #ccc',padding:'6px'}}>Name</th>
+                        <th style={{border:'1px solid #ccc',padding:'6px'}}>Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map((appt) => (
+                        <tr key={appt._id}>
+                          <td style={{border:'1px solid #ccc',padding:'6px'}}>{appt.userName || appt.name || appt.studentName || ""}</td>
+                          <td style={{border:'1px solid #ccc',padding:'6px'}}>{appt.userEmail || appt.email || appt.studentEmail || ""}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+          </>
+        )}
 
         {/* Handshake booking */}
         <div className="handshake-cta">
@@ -174,7 +241,7 @@ export default function BookAppointment() {
           {/* Requested Items */}
           <div style={{ marginBottom: 12 }}>
             <label>Requested Items</label>
-            
+
             {/* Display items from browse page */}
             {requestedItems.length > 0 && (
               <div className="items-list" style={{ marginBottom: 12 }}>
@@ -198,7 +265,7 @@ export default function BookAppointment() {
                 ))}
               </div>
             )}
-            
+
 
             {/* Manual entry option */}
             <div style={{ display: "flex", gap: "8px" }}>
