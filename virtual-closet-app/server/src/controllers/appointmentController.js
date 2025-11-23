@@ -254,7 +254,8 @@ export async function getAvailableSlots(req, res) {
     }
 
     // Check if date is a weekday (Monday-Friday)
-    const selectedDate = new Date(date);
+    const [year, month, day] = date.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day);
     const dayOfWeek = selectedDate.getDay();
     
     // Return empty slots for weekends (0 = Sunday, 6 = Saturday)
