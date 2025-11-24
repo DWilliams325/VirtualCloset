@@ -29,7 +29,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "cancelled", "completed", "blocked"],
+      enum: ["pending", "confirmed", "cancelled", "completed", "blocked", "denied"],
       default: "pending",
       index: true,
     },
@@ -61,6 +61,30 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
       default: 45,
     },
+    requestedItems: [
+      {
+        id: {
+          type: String,
+          required: true,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        category: {
+          type: String,
+          required: true,
+        },
+        color: String,
+        size: String,
+        status: {
+          type: String,
+          enum: ["reserved", "approved", "rejected", "picked_up", "returned"],
+          default: "reserved",
+        },
+        notes: String, // Admin can add notes like "doesn't fit, try size up"
+      },
+    ],
     isAdminBlocked: {
       type: Boolean,
       default: false,

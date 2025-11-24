@@ -210,18 +210,18 @@ export function ItemCard({ item }) {
           {item.category} · {item.color} · Size {item.size} · #{item.id}
         </p>
         <div className="btn-row">
-          <button 
-            className="btn" 
+          <button
+            className="btn"
             onClick={handleReserve}
             disabled={item.status === "Unavailable"}
-            style={{ 
+            style={{
               opacity: item.status === "Unavailable" ? 0.5 : 1,
               cursor: item.status === "Unavailable" ? "not-allowed" : "pointer"
             }}
           >
             Reserve
           </button>
-          <button 
+          <button
             className="btn-outline"
             onClick={handleAddToOutfit}
             disabled={item.status === "Unavailable"}

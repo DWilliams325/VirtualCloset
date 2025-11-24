@@ -9,6 +9,9 @@ router.get("/", appointmentController.getAllAppointments);
 // Get available time slots for a specific date
 router.get("/available-slots", appointmentController.getAvailableSlots);
 
+// Get fully blocked dates
+router.get("/blocked-dates", appointmentController.getBlockedDates);
+
 // Get a single appointment by ID
 router.get("/:id", appointmentController.getAppointmentById);
 
@@ -25,6 +28,12 @@ router.patch("/:id/cancel", appointmentController.cancelAppointment);
 router.delete("/:id", appointmentController.deleteAppointment);
 
 // Admin: Block a time slot
-router.post("/admin/block", appointmentController.blockTimeSlot);
+router.post("/block", appointmentController.blockTimeSlot);
+
+// Unblock an entire day
+router.post("/unblock-day", appointmentController.unblockDay);
+
+// Check item conflicts for a date
+router.get("/item-conflicts", appointmentController.checkItemConflicts);
 
 export default router;

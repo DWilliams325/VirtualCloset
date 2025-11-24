@@ -33,9 +33,13 @@ export default function SignIn({ onLogin, loggedIn }) {
       setError("Use your PFW email address (e.g., username@pfw.edu).");
       return;
     }
-    setLoading(false);
+
     if (onLogin) {
-      onLogin(trimmedEmail);
+      const result = onLogin(trimmedEmail, password, remember);
+      if (result && !result.success) {
+        setError(result.error || "Login failed");
+        return;
+      }
       navigate(from, { replace: true });
     }
   }

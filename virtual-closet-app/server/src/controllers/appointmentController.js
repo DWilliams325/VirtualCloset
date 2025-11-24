@@ -1,6 +1,53 @@
 import Appointment from "../models/Appointment.js";
 
 /**
+ * Helper function to check if items are available for a given date
+ * Returns array of conflicting items with details about who has them reserved
+ */
+async function checkItemAvailability(requestedItems, appointmentDate, excludeAppointmentId = null) {
+  if (!requestedItems || requestedItems.length === 0) {
+    return { available: true, conflicts: [] };
+  }
+
+  const itemIds = requestedItems.map(item => item.id);
+  
+  // Find appointments on the same date with overlapping items
+  const filter = {
+    date: appointmentDate,
+    status: { $in: ["pending", "confirmed"] },
+    "requestedItems.id": { $in: itemIds },
+  };
+  
+  if (excludeAppointmentId) {
+    filter._id = { $ne: excludeAppointmentId };
+  }
+
+  const conflictingAppointments = await Appointment.find(filter);
+  
+  const conflicts = [];
+  for (const appointment of conflictingAppointments) {
+    for (const requestedItem of requestedItems) {
+      const hasItem = appointment.requestedItems.some(item => item.id === requestedItem.id);
+      if (hasItem) {
+        conflicts.push({
+          itemId: requestedItem.id,
+          itemName: requestedItem.name,
+          reservedBy: appointment.userName,
+          reservedByEmail: appointment.userEmail,
+          appointmentId: appointment._id,
+          appointmentTime: appointment.time,
+        });
+      }
+    }
+  }
+
+  return {
+    available: conflicts.length === 0,
+    conflicts,
+  };
+}
+
+/**
  * Get all appointments (with optional filters)
  */
 export async function getAllAppointments(req, res) {
@@ -78,6 +125,7 @@ export async function createAppointment(req, res) {
       major,
       notes,
       duration = 45,
+      requestedItems = [],
     } = req.body;
 
     // Validate required fields
@@ -102,6 +150,15 @@ export async function createAppointment(req, res) {
       });
     }
 
+    // Check if requested items are available (optional - you can remove this if you want to allow conflicts)
+    // This allows multiple people to request same item - admin will decide during approval
+    const itemCheck = await checkItemAvailability(requestedItems, date);
+    if (!itemCheck.available) {
+      // WARNING: Item conflicts exist but we'll allow booking anyway
+      // Admin can handle conflicts during approval process
+      console.warn(`Item conflicts detected for appointment on ${date}:`, itemCheck.conflicts);
+    }
+
     const appointment = new Appointment({
       userId,
       userName,
@@ -112,6 +169,14 @@ export async function createAppointment(req, res) {
       major,
       notes,
       duration,
+      requestedItems: requestedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        color: item.color || "",
+        size: item.size || "",
+        status: "reserved",
+      })),
       appointmentType: "consultation",
       status: "pending",
       createdBy: userId,
@@ -300,24 +365,103 @@ export async function getAvailableSlots(req, res) {
 }
 
 /**
- * Admin: Block a time slot
+ * Admin: Block a time slot or entire day
  */
 export async function blockTimeSlot(req, res) {
   try {
-    const { date, time, duration = 60, reason } = req.body;
+    const { date, time, blockEntireDay, blockTimeRange, timeFrom, timeTo, duration = 60, reason } = req.body;
     const adminId = req.body.adminId || "admin";
 
-    if (!date || !time) {
+    if (!date) {
       return res.status(400).json({
         success: false,
-        error: "Date and time are required",
+        error: "Date is required",
+      });
+    }
+
+    const allSlots = [
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+      "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+      "15:00", "15:30", "16:00", "16:30", "17:00"
+    ];
+
+    if (blockEntireDay) {
+      const blockedSlots = allSlots.map(slot => ({
+        userId: adminId,
+        userName: "Admin Block - Entire Day",
+        userEmail: adminId,
+        date,
+        time: slot,
+        duration: 30,
+        reason,
+        status: "blocked",
+        appointmentType: "consultation",
+        isAdminBlocked: true,
+        createdBy: adminId,
+      }));
+
+      await Appointment.insertMany(blockedSlots);
+
+      return res.status(201).json({
+        success: true,
+        message: `Blocked entire day: ${date}`,
+        data: blockedSlots,
+      });
+    }
+
+    if (blockTimeRange) {
+      if (!timeFrom || !timeTo) {
+        return res.status(400).json({
+          success: false,
+          error: "timeFrom and timeTo are required for time range blocking",
+        });
+      }
+
+      const fromIndex = allSlots.indexOf(timeFrom);
+      const toIndex = allSlots.indexOf(timeTo);
+
+      if (fromIndex === -1 || toIndex === -1 || fromIndex >= toIndex) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid time range",
+        });
+      }
+
+      const slotsToBlock = allSlots.slice(fromIndex, toIndex + 1);
+      const blockedSlots = slotsToBlock.map(slot => ({
+        userId: adminId,
+        userName: `Admin Block - ${timeFrom} to ${timeTo}`,
+        userEmail: adminId,
+        date,
+        time: slot,
+        duration: 30,
+        reason,
+        status: "blocked",
+        appointmentType: "consultation",
+        isAdminBlocked: true,
+        createdBy: adminId,
+      }));
+
+      await Appointment.insertMany(blockedSlots);
+
+      return res.status(201).json({
+        success: true,
+        message: `Blocked time range: ${timeFrom} to ${timeTo} on ${date}`,
+        data: blockedSlots,
+      });
+    }
+
+    if (!time) {
+      return res.status(400).json({
+        success: false,
+        error: "Time is required when not blocking entire day or time range",
       });
     }
 
     const blockedSlot = new Appointment({
       userId: adminId,
       userName: "Admin Block",
-      userEmail: "admin@university.edu",
+      userEmail: adminId,
       date,
       time,
       duration,
@@ -339,6 +483,152 @@ export async function blockTimeSlot(req, res) {
     res.status(500).json({
       success: false,
       error: error.message || "Failed to block time slot",
+    });
+  }
+}
+
+/**
+ * Get fully blocked dates (all slots blocked)
+ */
+export async function getBlockedDates(req, res) {
+  try {
+    const allSlots = [
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+      "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+      "15:00", "15:30", "16:00", "16:30", "17:00"
+    ];
+
+    const blockedAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          status: "blocked",
+          date: { $gte: new Date().toISOString().split('T')[0] }
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          blockedSlots: { $push: "$time" }
+        }
+      }
+    ]);
+
+    const fullyBlockedDates = blockedAppointments
+      .filter(day => day.blockedSlots.length === allSlots.length)
+      .map(day => day._id);
+
+    res.json({
+      success: true,
+      data: fullyBlockedDates,
+    });
+  } catch (error) {
+    console.error("Error fetching blocked dates:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to fetch blocked dates",
+    });
+  }
+}
+
+/**
+ * Unblock an entire day
+ */
+export async function unblockDay(req, res) {
+  try {
+    const { date } = req.body;
+
+    if (!date) {
+      return res.status(400).json({
+        success: false,
+        error: "Date is required",
+      });
+    }
+
+    const result = await Appointment.deleteMany({
+      date,
+      status: "blocked"
+    });
+
+    res.json({
+      success: true,
+      message: `Unblocked ${result.deletedCount} slots on ${date}`,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error("Error unblocking day:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to unblock day",
+    });
+  }
+}
+
+/**
+ * Check item availability for a specific date
+ * Useful for admins to see which items are in high demand
+ */
+export async function checkItemConflicts(req, res) {
+  try {
+    const { date, itemIds } = req.query;
+
+    if (!date) {
+      return res.status(400).json({
+        success: false,
+        error: "Date is required",
+      });
+    }
+
+    const items = itemIds ? itemIds.split(',') : [];
+    
+    // Get all appointments on this date with requested items
+    const appointments = await Appointment.find({
+      date,
+      status: { $in: ["pending", "confirmed"] },
+      "requestedItems.0": { $exists: true }, // Has at least one item
+    }).select("userName userEmail time requestedItems status");
+
+    // Build item conflict map
+    const itemConflicts = {};
+    
+    appointments.forEach(appointment => {
+      appointment.requestedItems.forEach(item => {
+        if (items.length === 0 || items.includes(item.id)) {
+          if (!itemConflicts[item.id]) {
+            itemConflicts[item.id] = {
+              itemId: item.id,
+              itemName: item.name,
+              category: item.category,
+              size: item.size,
+              requestedBy: [],
+            };
+          }
+          itemConflicts[item.id].requestedBy.push({
+            userName: appointment.userName,
+            userEmail: appointment.userEmail,
+            appointmentTime: appointment.time,
+            appointmentStatus: appointment.status,
+            itemStatus: item.status,
+          });
+        }
+      });
+    });
+
+    // Find items with conflicts (multiple people requesting same item)
+    const conflicts = Object.values(itemConflicts).filter(item => item.requestedBy.length > 1);
+
+    res.json({
+      success: true,
+      date,
+      totalItems: Object.keys(itemConflicts).length,
+      conflictCount: conflicts.length,
+      conflicts,
+      allItems: itemConflicts,
+    });
+  } catch (error) {
+    console.error("Error checking item conflicts:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to check item conflicts",
     });
   }
 }
