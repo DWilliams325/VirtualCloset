@@ -1,3 +1,7 @@
+// AI-Assisted Code Notice:
+// Student appointment view with modal-based rescheduling functionality was developed
+// with AI assistance for complex state management and user interaction flows.
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate, formatTime, formatTimestamp } from "../utils/dateUtils";

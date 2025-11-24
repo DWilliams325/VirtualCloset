@@ -1,3 +1,7 @@
+// AI-Assisted Code Notice:
+// Core appointment CRUD logic, conflict detection algorithms
+// functionality were developed with AI assistance for code structure and optimization.
+
 import Appointment from "../models/Appointment.js";
 
 /**

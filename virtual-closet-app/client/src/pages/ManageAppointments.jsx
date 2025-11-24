@@ -1,3 +1,7 @@
+// AI-Assisted Code Notice:
+// Admin appointment management UI with filtering, status management, and bulk operations
+// was developed with AI assistance for component structure and state management patterns.
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate, formatTime, formatTimestamp } from "../utils/dateUtils";
