@@ -4,6 +4,7 @@
 .env.*.local
 **/.env
 **/google-cloud-key.json
+gcs-credentials.json    
 
 # Dependencies
 node_modules/
@@ -25,3 +26,4 @@ build/
 gcs-images/
 thumbnails/
 thumbnails-webp/
+
