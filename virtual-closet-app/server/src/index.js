@@ -51,6 +51,27 @@ app.get("/", (req, res) => {
   res.json({
     message: "Welcome to Virtual Closet API",
     version: "1.0.0",
+    endpoints: {
+      health: "/api/health",
+      clothing: {
+        getAll: "GET /api/clothing?userId=virtual-closet-user",
+        getById: "GET /api/clothing/:clothingId",
+      },
+      images: {
+        syncUrls: "PUT /api/images/sync-urls",
+        missing: "GET /api/images/missing?userId=virtual-closet-user",
+      },
+    },
+    users: {
+      default: "virtual-closet-user (1,033 items)",
+      test: "test-user-123 (0 items)",
+    },
+    quickTests: [
+      "GET /api/health",
+      "GET /api/clothing?userId=virtual-closet-user",
+      "GET /api/clothing/1001",
+      "GET /api/images/missing?userId=virtual-closet-user&limit=5",
+    ],
   });
 });
 
@@ -77,7 +98,17 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+  console.log(`API available at: http://localhost:${PORT}/`);
+});
+
+// Graceful shutdown handler
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+  server.close(() => {
+    console.log("HTTP server closed");
+  });
 });
