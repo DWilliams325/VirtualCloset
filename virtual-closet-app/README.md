@@ -20,3 +20,6 @@ Running the Project:
     Back end:
     - cd server
     - node index.js
+
+Test Admin
+    -http://localhost:5173/admin
