@@ -1,13 +1,30 @@
-import "dotenv/config";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// ES module __filename and __dirname setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+
+// Load .env from parent directory (server/.env)
+dotenv.config({ path: join(__dirname, "..", ".env") });
+
 import connectDB from "./config/database.js";
+
+// Import routes
 import clothingRoutes from "./routes/clothing.js";
 import imageRoutes from "./routes/images.js";
 import appointmentRoutes from "./routes/appointments.js";
+import uploadRoute from "./routes/upload.js";
+import adminRoutes from "./routes/admin.js";
+
 const app = express();
+const PORT = process.env.PORT || 5001;
+
 app.use(cors());
-const PORT = 5001;
 
 async function startServer() {
   try {
@@ -17,8 +34,8 @@ async function startServer() {
     await connectDB();
     console.log("MongoDB connected successfully");
 
-
     app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
     // Health check endpoint
     app.get("/api/health", (req, res) => {
@@ -74,6 +91,8 @@ async function startServer() {
     app.use("/api/clothing", clothingRoutes);
     app.use("/api/images", imageRoutes);
     app.use("/api/appointments", appointmentRoutes);
+    app.use("/api/upload", uploadRoute);
+    app.use("/api/admin", adminRoutes);
 
     // 404 handler - catches all undefined routes
     app.use((req, res) => {

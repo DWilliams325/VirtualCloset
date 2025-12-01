@@ -1,21 +1,20 @@
 import { NavLink } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import pfwLogo from "/pfw-Logo.svg";
-import "../styles/navBar.css"
+import "../styles/navBar.css";
 
 function getInitials(email) {
   if (!email) return "?";
   const name = email.split("@")[0];
   const parts = name.split(/[._-]/);
   if (parts.length === 1) return parts[0][0].toUpperCase();
-  return (parts[0][0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
 export default function Navbar({ loggedIn, userEmail, onLogout, reservedItemsCount = 0, isAdmin = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -46,9 +45,11 @@ export default function Navbar({ loggedIn, userEmail, onLogout, reservedItemsCou
             <span>Career Closet</span>
           </NavLink>
         </li>
+
         <li>
           <NavLink to="/browse">Browse Clothing</NavLink>
         </li>
+
         <li style={{ position: "relative" }}>
           <NavLink to="/book">
             Book Appointment
@@ -57,9 +58,11 @@ export default function Navbar({ loggedIn, userEmail, onLogout, reservedItemsCou
             )}
           </NavLink>
         </li>
+
         <li>
           <NavLink to="/build">Build Outfit</NavLink>
         </li>
+
         <li style={{ position: "relative" }}>
           {loggedIn ? (
             <>
@@ -75,13 +78,9 @@ export default function Navbar({ loggedIn, userEmail, onLogout, reservedItemsCou
               </button>
               {menuOpen && (
                 <div ref={menuRef} className="dropdown-menu" style={{ position: "absolute", right: 0, top: "110%", background: "white", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", minWidth: 200, zIndex: 10 }}>
-                  {isAdmin ? (
-                    <NavLink to="/manage-appointments" className="dropdown-item" style={{ display: "block", width: "100%", padding: "10px 16px", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(false)}>
-                      Manage Appointments
-                    </NavLink>
-                  ) : (
-                    <NavLink to="/my-appointments" className="dropdown-item" style={{ display: "block", width: "100%", padding: "10px 16px", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(false)}>
-                      My Appointments
+                  {isAdmin && (
+                    <NavLink to="/admin" className="dropdown-item" style={{ display: "block", width: "100%", padding: "10px 16px", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(false)}>
+                      Admin Dashboard
                     </NavLink>
                   )}
                   <button className="dropdown-item" style={{ width: "100%", padding: "10px 16px", background: "none", border: "none", textAlign: "left", cursor: "pointer" }} onClick={handleSignOut}>

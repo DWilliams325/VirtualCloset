@@ -55,91 +55,97 @@ export default function SignIn({ onLogin, loggedIn }) {
         {loggedIn ? (
           <div className="signin-success">You are now logged in!</div>
         ) : (
-          <form onSubmit={handleSubmit} className="signin-form" noValidate>
-            <div className="field">
-              <label htmlFor="email" className="label">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="you@pfw.edu"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`input ${emailInvalid ? "input-invalid" : ""}`}
-                aria-invalid={emailInvalid}
-                aria-describedby="email-help"
-                // Browser-level validation (also enforced in JS above)
-                pattern="^[^\s@]+@pfw\.edu$"
-                title="Use your PFW email (e.g., username@pfw.edu)"
-              />
-              {emailInvalid && (
-                <small id="email-help" className="help-text">
-                  Email must be your PFW address (e.g., username@pfw.edu).
-                </small>
-              )}
-            </div>
+          <>
+            {error && (
+              <div role="alert" className="signin-error">{error}</div>
+            )}
 
-            <div className="field">
-              <label htmlFor="password" className="label">Password</label>
-              <div className="password-row">
+            <form onSubmit={handleSubmit} className="signin-form" noValidate>
+              <div className="field">
+                <label htmlFor="email" className="label">Email</label>
                 <input
-                  id="password"
-                  name="password"
-                  type={showPass ? "text" : "password"}
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input with-toggle"
-                  aria-invalid={!!error && !password}
-                  minLength={6}
-                  required
+                  id="email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="you@pfw.edu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`input ${emailInvalid ? "input-invalid" : ""}`}
+                  aria-invalid={emailInvalid}
+                  aria-describedby="email-help"
+                  // Browser-level validation (also enforced in JS above)
+                  pattern="^[^\s@]+@pfw\.edu$"
+                  title="Use your PFW email (e.g., username@pfw.edu)"
                 />
+                {emailInvalid && (
+                  <small id="email-help" className="help-text">
+                    Email must be your PFW address (e.g., username@pfw.edu).
+                  </small>
+                )}
+              </div>
+
+              <div className="field">
+                <label htmlFor="password" className="label">Password</label>
+                <div className="password-row">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPass ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input with-toggle"
+                    aria-invalid={!!error && !password}
+                    minLength={6}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass((s) => !s)}
+                    className="show-btn"
+                    aria-label={showPass ? "Hide password" : "Show password"}
+                  >
+                    {showPass ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="row-between">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="checkbox"
+                  />
+                  Remember me
+                </label>
+
                 <button
                   type="button"
-                  onClick={() => setShowPass((s) => !s)}
-                  className="show-btn"
-                  aria-label={showPass ? "Hide password" : "Show password"}
+                  onClick={() => navigate("/forgot-password")}
+                  className="link-btn"
                 >
-                  {showPass ? "Hide" : "Show"}
+                  Forgot password?
                 </button>
               </div>
-            </div>
 
-            <div className="row-between">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="checkbox"
-                />
-                Remember me
-              </label>
-
-              <button
-                type="button"
-                onClick={() => navigate("/forgot-password")}
-                className="link-btn"
-              >
-                Forgot password?
+              <button type="submit" className="primary-btn" disabled={loading}>
+                {loading ? "Signing in..." : "Sign In"}
               </button>
-            </div>
+            </form>
 
-            <button type="submit" className="primary-btn" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
+            <p className="meta">
+              Don't have an account?{" "}
+              <button type="button" onClick={() => navigate("/signup")} className="link-btn">
+                Create one
+              </button>
+            </p>
+          </>
         )}
-
-        <p className="meta">
-          Don’t have an account?{" "}
-          <button type="button" onClick={() => navigate("/signup")} className="link-btn">
-            Create one
-          </button>
-        </p>
       </main>
 
 

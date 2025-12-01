@@ -9,15 +9,12 @@ import BrowseClothing from "./pages/BrowseClothing";
 import BookAppointment from "./pages/BookAppointment";
 import BuildOutfit from "./pages/BuildOutfit";
 import SignIn from "./pages/SignIn";
-import MyAppointments from "./pages/MyAppointments";
-import ManageAppointments from "./pages/ManageAppointments";
+import AdminDashboard from "./pages/AdminDashboard";
 import auth from "./utils/auth";
 import "./styles/global.css";
 
 function AppContent() {
   const { requestedItems, clearItems } = useAppointment();
-
-  // Use auth utility instead of direct localStorage
   const [user, setUser] = React.useState(() => auth.getCurrentUser());
   const loggedIn = !!user;
   const userEmail = user?.email || "";
@@ -43,7 +40,7 @@ function AppContent() {
   const handleLogout = () => {
     auth.logout();
     setUser(null);
-    clearItems(); // Clear requested items on logout
+    clearItems();
   };
 
   return (
@@ -61,9 +58,8 @@ function AppContent() {
           <Route path="/browse" element={<BrowseClothing userEmail={userEmail} />} />
           <Route path="/book" element={<BookAppointment userEmail={userEmail} isAdmin={user?.isAdmin} />} />
           <Route path="/build" element={<BuildOutfit />} />
-          <Route path="/my-appointments" element={<MyAppointments userEmail={userEmail} />} />
-          <Route path="/manage-appointments" element={<ManageAppointments userEmail={userEmail} isAdmin={user?.isAdmin} />} />
           <Route path="/signin" element={<SignIn onLogin={handleLogin} loggedIn={loggedIn} />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
       <Footer />
@@ -78,3 +74,4 @@ export default function App() {
     </AppointmentProvider>
   );
 }
+

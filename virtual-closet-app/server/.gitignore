@@ -2,7 +2,6 @@
 .env
 .env.local
 .env.*.local
-
 # Dependencies
 node_modules/
 
@@ -28,8 +27,13 @@ Thumbs.db
 gcs-credentials.json
 google-cloud-key.json
 *.json.key
+<<<<<<< HEAD
 virtualcloset-*.json
 *-service-account.json
+=======
+gcs-credentials.json
+
+>>>>>>> main
 
 # Build
 dist/
