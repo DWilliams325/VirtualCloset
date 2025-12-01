@@ -78,9 +78,13 @@ export default function Navbar({ loggedIn, userEmail, onLogout, reservedItemsCou
               </button>
               {menuOpen && (
                 <div ref={menuRef} className="dropdown-menu" style={{ position: "absolute", right: 0, top: "110%", background: "white", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", minWidth: 200, zIndex: 10 }}>
-                  {isAdmin && (
+                  {isAdmin ? (
                     <NavLink to="/admin" className="dropdown-item" style={{ display: "block", width: "100%", padding: "10px 16px", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(false)}>
                       Admin Dashboard
+                    </NavLink>
+                  ) : (
+                    <NavLink to="/my-appointments" className="dropdown-item" style={{ display: "block", width: "100%", padding: "10px 16px", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(false)}>
+                      My Appointments
                     </NavLink>
                   )}
                   <button className="dropdown-item" style={{ width: "100%", padding: "10px 16px", background: "none", border: "none", textAlign: "left", cursor: "pointer" }} onClick={handleSignOut}>

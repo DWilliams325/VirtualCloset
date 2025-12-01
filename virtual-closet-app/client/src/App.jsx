@@ -9,6 +9,7 @@ import BrowseClothing from "./pages/BrowseClothing";
 import BookAppointment from "./pages/BookAppointment";
 import BuildOutfit from "./pages/BuildOutfit";
 import SignIn from "./pages/SignIn";
+import MyAppointments from "./pages/MyAppointments";
 import AdminDashboard from "./pages/AdminDashboard";
 import auth from "./utils/auth";
 import "./styles/global.css";
@@ -59,6 +60,7 @@ function AppContent() {
           <Route path="/book" element={<BookAppointment userEmail={userEmail} isAdmin={user?.isAdmin} />} />
           <Route path="/build" element={<BuildOutfit />} />
           <Route path="/signin" element={<SignIn onLogin={handleLogin} loggedIn={loggedIn} />} />
+          <Route path="/my-appointments" element={<MyAppointments userEmail={userEmail} />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
