@@ -27,13 +27,8 @@ Thumbs.db
 gcs-credentials.json
 google-cloud-key.json
 *.json.key
-<<<<<<< HEAD
 virtualcloset-*.json
 *-service-account.json
-=======
-gcs-credentials.json
-
->>>>>>> main
 
 # Build
 dist/
