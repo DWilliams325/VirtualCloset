@@ -1,3 +1,11 @@
+/**
+ * AdminAppointmentManagement Component
+ * Developed with AI assistance
+ * 
+ * AI assisted with:filter state management, API integration patterns, 
+ * and responsive card layout implementation.
+ */
+
 import { useState, useEffect } from "react";
 import { formatDate, formatTime } from "../utils/dateUtils";
 import { appointmentsApi } from "../utils/api";

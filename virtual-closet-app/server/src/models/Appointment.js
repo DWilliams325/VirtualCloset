@@ -1,3 +1,11 @@
+/**
+ * Appointment Model
+ * Developed with AI assistance
+ * 
+ * AI assisted with: Schema design, index optimization, virtual properties,
+ * static methods for slot availability, and status enum definitions.
+ */
+
 import mongoose from "mongoose";
 
 const appointmentSchema = new mongoose.Schema(

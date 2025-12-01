@@ -1,3 +1,10 @@
+/**
+ * BookAppointment Component
+ * Developed with AI assistance
+ *
+ * AI assisted with: date/time state management and slot availability fetching
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
