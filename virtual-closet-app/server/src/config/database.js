@@ -14,6 +14,8 @@ async function connectDB() {
   }
 }
 
+// Export both default and named export to be compatible with different import styles
+export { connectDB };
 export default connectDB;
 
 /**
