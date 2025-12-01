@@ -72,6 +72,7 @@ app.get("/", (req, res) => {
 // Mount routes
 app.use("/api/clothing", clothingRoutes);
 app.use("/api/images", imageRoutes);
+app.use("/api/upload", uploadRoute);
 app.use("/api/admin", adminRoutes);
 
 
