@@ -13,8 +13,6 @@ import uploadRoute from "./routes/upload.js";
 import adminRoutes from "./routes/admin.js";
 
 
-// Load .env from parent directory (server/.env)
-dotenv.config({ path: join(__dirname, "..", ".env") });
 
 // Get directory name for ES modules only once
 const __filename = fileURLToPath(import.meta.url);
