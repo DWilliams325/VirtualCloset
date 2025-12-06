@@ -125,7 +125,6 @@ export default function AdminAppointmentManagement() {
                         <div style={styles.cardBody}>
                             <p><strong>Date:</strong> {formatDate(appt.date)}</p>
                             <p><strong>Time:</strong> {formatTime(appt.timeSlot)}</p>
-                            <p><strong>Purpose:</strong> {appt.purpose || "Not specified"}</p>
                             {appt.notes && <p><strong>Notes:</strong> {appt.notes}</p>}
                             {appt.requestedItems && appt.requestedItems.length > 0 && (
                                 <p><strong>Requested Items:</strong> {appt.requestedItems.length} item(s)</p>
