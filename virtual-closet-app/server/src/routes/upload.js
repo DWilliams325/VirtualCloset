@@ -19,6 +19,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     );
 
     // 2. Build clothing metadata object
+    // TODO: Replace hardcoded userId with req.user.id once user authentication is implemented
     const itemData = {
       userId: "virtual-closet-user", // required by schema
       clothingId: req.body.clothingId,

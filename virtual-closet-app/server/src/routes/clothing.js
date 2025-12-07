@@ -6,6 +6,8 @@ const router = express.Router();
 // Get all clothing items for a user with pagination
 router.get("/", async (req, res) => {
   try {
+    // TODO: Replace hardcoded userId with req.user.id once user authentication is implemented
+    // Remove userId from query params; extract from authenticated session instead
     const userId = req.query.userId || "virtual-closet-user";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
