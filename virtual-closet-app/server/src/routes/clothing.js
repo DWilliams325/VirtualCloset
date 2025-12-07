@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     const result = await clothingController.getAllItems(userId, { skip, limit });
     
     // No caching - always get fresh data for new uploads
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Cache-Control', 'public, max-age=300'); // Cache for 5 minutes
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     res.json(result);
