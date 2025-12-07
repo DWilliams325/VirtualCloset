@@ -16,10 +16,13 @@ export const auth = {
    * SSO TODO: Parse from JWT token claims instead
    */
   getCurrentUser: () => {
+    // Check sessionStorage first (per-tab session), then localStorage (cross-tab persistence)
     const email = sessionStorage.getItem(`${STORAGE_PREFIX}userEmail`) || 
                   localStorage.getItem(`${STORAGE_PREFIX}userEmail`);
     const name = sessionStorage.getItem(`${STORAGE_PREFIX}userName`) || 
                  localStorage.getItem(`${STORAGE_PREFIX}userName`);
+    const role = sessionStorage.getItem(`${STORAGE_PREFIX}userRole`) || 
+                 localStorage.getItem(`${STORAGE_PREFIX}userRole`) || 'user';
     
     if (!email) return null;
     
@@ -27,7 +30,8 @@ export const auth = {
       id: email, // SSO TODO: Use SSO unique userId instead
       email: email,
       name: name || email.split('@')[0],
-      isAdmin: email.toLowerCase() === 'admin@pfw.edu', // SSO TODO: Read from token roles
+      role: role, // Use role from database (set during login/register)
+      isAdmin: role === 'admin', // Check against database role, not hardcoded email
     };
   },
 
@@ -36,6 +40,7 @@ export const auth = {
    * SSO TODO: Validate JWT token instead
    */
   isAuthenticated: () => {
+    // Check sessionStorage first (per-tab session), then localStorage (cross-tab persistence)
     const email = sessionStorage.getItem(`${STORAGE_PREFIX}userEmail`) || 
                   localStorage.getItem(`${STORAGE_PREFIX}userEmail`);
     return !!email;
@@ -71,8 +76,10 @@ export const auth = {
   logout: () => {
     sessionStorage.removeItem(`${STORAGE_PREFIX}userEmail`);
     sessionStorage.removeItem(`${STORAGE_PREFIX}userName`);
+    sessionStorage.removeItem(`${STORAGE_PREFIX}userRole`);
     localStorage.removeItem(`${STORAGE_PREFIX}userEmail`);
     localStorage.removeItem(`${STORAGE_PREFIX}userName`);
+    localStorage.removeItem(`${STORAGE_PREFIX}userRole`);
   },
 
   /**
