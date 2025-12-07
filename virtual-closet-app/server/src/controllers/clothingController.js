@@ -27,6 +27,7 @@ export async function getAllItems(userId, options = {}) {
             webpUrl.includes("googleapis.com")
               ? webpUrl
               : null;
+
         } catch (e) {
           console.error(
             `Failed to generate signed URL for ${item.imageUrl}:`,

@@ -15,8 +15,10 @@ router.get("/", async (req, res) => {
     
     const result = await clothingController.getAllItems(userId, { skip, limit });
     
-    // Cache for 5 minutes (signed URLs valid for 7 days)
-    res.setHeader('Cache-Control', 'public, max-age=300');
+    // No caching - always get fresh data for new uploads
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.json(result);
   } catch (error) {
     res.status(500).json({

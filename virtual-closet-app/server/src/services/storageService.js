@@ -1,5 +1,6 @@
 
 import { Storage } from "@google-cloud/storage";
+import sharp from "sharp";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -27,12 +28,19 @@ if (process.env.NODE_ENV === "test") {
       try {
         if (!bucket) return reject(new Error("GCS bucket not configured"));
 
-        const fileName = `uploads/${Date.now()}_${originalName}`;
+        // Convert image to WebP for better compression
+        const webpBuffer = await sharp(fileBuffer)
+          .webp({ quality: 80 })
+          .toBuffer();
+
+        // Remove original extension and add .webp
+        const baseName = originalName.split('.')[0];
+        const fileName = `uploads/${Date.now()}_${baseName}.webp`;
         const file = bucket.file(fileName);
 
         const stream = file.createWriteStream({
           metadata: {
-            contentType: "image/jpeg",
+            contentType: "image/webp",
           },
           resumable: false,
         });
@@ -46,7 +54,7 @@ if (process.env.NODE_ENV === "test") {
           resolve(gcsPath);
         });
 
-        stream.end(fileBuffer);
+        stream.end(webpBuffer);
       } catch (err) {
         reject(err);
       }
