@@ -47,26 +47,13 @@ export const auth = {
   },
 
   /**
-   * Simple login (temporary - for development/testing)
+   * Simple login (DEPRECATED - use server authentication instead)
    * SSO TODO: Replace with redirect to SSO provider
    */
   login: (email, password, remember = false) => {
-    // Simple validation for testing
-    if (!email || !password) {
-      return { success: false, error: 'Email and password required' };
-    }
-    
-    if (!/^[^\s@]+@pfw\.edu$/i.test(email)) {
-      return { success: false, error: 'Must use PFW email address' };
-    }
-
-    // For testing - accept any password
-    // SSO TODO: Remove this entirely, redirect to SSO login page
-    const storage = remember ? localStorage : sessionStorage;
-    storage.setItem(`${STORAGE_PREFIX}userEmail`, email.toLowerCase());
-    storage.setItem(`${STORAGE_PREFIX}userName`, email.split('@')[0]);
-    
-    return { success: true };
+    // This fallback is disabled - all logins must be validated by the server
+    // Keeping function for backwards compatibility only
+    return { success: false, error: 'Server authentication required' };
   },
 
   /**

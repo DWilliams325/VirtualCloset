@@ -67,15 +67,10 @@ export default function SignIn({ onLogin, loggedIn }) {
         navigate(from, { replace: true });
         return;
       } catch (err) {
-        // fallback to local auth if server not reachable or login failed
-        console.warn('Server login failed, falling back to local auth:', err.message);
-        const result = onLogin ? onLogin(trimmedEmail, password, remember) : auth.login(trimmedEmail, password, remember);
-        if (result && !result.success) {
-          setError(result.error || "Login failed");
-          setLoading(false);
-          return;
-        }
-        navigate(from, { replace: true });
+        // No fallback - login must go through server with database validation
+        console.error('Server login failed:', err.message);
+        setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+        setLoading(false);
         return;
       }
     } finally {
@@ -136,13 +131,9 @@ export default function SignIn({ onLogin, loggedIn }) {
         navigate(from, { replace: true });
         return;
       } catch (err) {
-        console.warn('Server registration failed, falling back to client-only create:', err.message);
-        // fallback client-side: mimic a created account locally
-        const storage = remember ? localStorage : sessionStorage;
-        storage.setItem('vc_temp_userEmail', trimmedEmail);
-        storage.setItem('vc_temp_userName', name);
-        if (onLogin) onLogin(trimmedEmail, password, remember);
-        navigate(from, { replace: true });
+        console.error('Server registration failed:', err.message);
+        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+        setLoading(false);
         return;
       }
     } finally {
