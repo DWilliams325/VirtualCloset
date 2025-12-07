@@ -7,7 +7,7 @@ const router = express.Router();
 // Get items missing images
 router.get("/missing", async (req, res) => {
   try {
-    const userId = req.query.userId || "test-user-123";
+    const userId = req.query.userId || "virtual-closet-user";
     const limit = parseInt(req.query.limit) || 50;
 
     const result = await imageController.getItemsMissingImages(userId, limit);

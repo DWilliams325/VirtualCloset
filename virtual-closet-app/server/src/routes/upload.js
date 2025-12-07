@@ -20,7 +20,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     // 2. Build clothing metadata object
     const itemData = {
-      userId: "test-user-123", // required by schema
+      userId: "virtual-closet-user", // required by schema
       clothingId: req.body.clothingId,
       name: req.body.name,
       category: req.body.category,
@@ -45,8 +45,18 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ error: "Image upload failed" });
+    console.error("Upload error:", err.message);
+    console.error("Error details:", err);
+    
+    // Return detailed error for debugging
+    const errorMessage = err.message.includes("E11000") 
+      ? `Duplicate clothingId - this ID already exists. Please use a unique ID.`
+      : err.message || "Image upload failed";
+    
+    res.status(500).json({ 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 

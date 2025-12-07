@@ -40,12 +40,10 @@ if (process.env.NODE_ENV === "test") {
         stream.on("error", (err) => reject(err));
 
         stream.on("finish", async () => {
-          const [signedUrl] = await file.getSignedUrl({
-            action: "read",
-            expires: "03-17-2050",
-          });
-
-          resolve(signedUrl);
+          // Return the GCS path (not the signed URL which expires)
+          // Controller will generate fresh signed URLs as needed
+          const gcsPath = `gs://${BUCKET_NAME}/${fileName}`;
+          resolve(gcsPath);
         });
 
         stream.end(fileBuffer);

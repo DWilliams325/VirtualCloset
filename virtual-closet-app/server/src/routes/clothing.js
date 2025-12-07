@@ -6,7 +6,7 @@ const router = express.Router();
 // Get all clothing items for a user with pagination
 router.get("/", async (req, res) => {
   try {
-    const userId = req.query.userId || "test-user-123";
+    const userId = req.query.userId || "virtual-closet-user";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
