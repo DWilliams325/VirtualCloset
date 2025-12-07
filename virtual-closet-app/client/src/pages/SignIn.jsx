@@ -26,6 +26,13 @@ export default function SignIn({ onLogin, loggedIn }) {
     location.state?.from ||
     "/browse";
 
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (loggedIn) {
+      navigate(from, { replace: true });
+    }
+  }, [loggedIn, navigate, from]);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");

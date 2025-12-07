@@ -215,7 +215,7 @@ export function ItemCard({ item, onDelete }) {
 
   const handleReserve = () => {
     addItem(item);
-    navigate("/book");
+    alert(`${item.name} added to your reservation! Continue browsing or click "Go to Book Appointment" when done.`);
   };
 
   const mapCategory = (cat) => {
