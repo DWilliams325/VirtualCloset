@@ -1,8 +1,7 @@
 import User from "../models/user.js";
 import Clothing from "../models/ClothingItem.js"; 
-import { deleteFile as deleteGcsFile, generateSignedUrl } from "../services/gcsService.js";
+import { deleteFile as deleteGcsFile } from "../services/gcsService.js";
 // import Outfit from "../models/Outfit.js";   // add when you create it
-// import Appointment from "../models/Appointment.js"; // add when you create it
 
 // -------- USERS --------
 export const getAllUsers = async (req, res) => {
@@ -104,27 +103,13 @@ export const getAllClothing = async (req, res) => {
   try {
     const items = await Clothing.find();
     
-    // Generate signed URLs for all items
-    const itemsWithSignedUrls = await Promise.all(
-      items.map(async (item) => {
-        let thumbnailWebpUrl = null;
-        
-        if (item.imageUrl) {
-          try {
-            const url = await generateSignedUrl(item.imageUrl, 604800);
-            if (url && typeof url === "string" && url.includes("googleapis.com")) {
-              thumbnailWebpUrl = url;
-            }
-          } catch {
-            thumbnailWebpUrl = null;
-          }
-        }
-        
-        return { ...item.toObject(), thumbnailWebpUrl };
-      })
-    );
+    // Return items with imageUrl as-is (bucket is now public with CORS configured)
+    const itemsWithUrls = items.map((item) => {
+      return { ...item.toObject() };
+      // imageUrl already contains the full public GCS URL, no need to sign
+    });
     
-    res.json(itemsWithSignedUrls);
+    res.json(itemsWithUrls);
   } catch (err) {
     console.error("getAllClothing error:", err);
     res.status(500).json({ message: "Failed to fetch clothing items" });
@@ -271,19 +256,65 @@ export const deleteImage = async (req, res) => {
 // -------- STATS --------
 export const getSystemStats = async (req, res) => {
   try {
-    const [userCount, clothingCount] = await Promise.all([
+    const [userCount, adminCount, clothingCount, itemsWithImages, itemsByCategory, itemsByGender, itemsByStatus] = await Promise.all([
       User.countDocuments(),
+      User.countDocuments({ role: "admin" }),
       Clothing.countDocuments(),
-      // Outfit.countDocuments(),       // add these later
-      // Appointment.countDocuments(),
+      Clothing.countDocuments({ imageUrl: { $exists: true, $ne: "" } }),
+      Clothing.aggregate([
+        { $group: { _id: "$category", count: { $sum: 1 } } },
+        { $sort: { count: -1 } }
+      ]),
+      Clothing.aggregate([
+        { $group: { _id: "$gender", count: { $sum: 1 } } },
+        { $sort: { count: -1 } }
+      ]),
+      Clothing.aggregate([
+        { $group: { _id: "$status", count: { $sum: 1 } } }
+      ]),
     ]);
 
-    // Fill in outfits/appointments later
+    const itemsWithoutImages = clothingCount - itemsWithImages;
+    const regularUsers = userCount - adminCount;
+    const avgItemsPerUser = userCount > 0 ? Math.round(clothingCount / userCount * 100) / 100 : 0;
+
+    // Convert category/gender/status arrays to objects
+    const categoryBreakdown = {};
+    itemsByCategory.forEach(cat => {
+      categoryBreakdown[cat._id || "Uncategorized"] = cat.count;
+    });
+
+    const genderBreakdown = {};
+    itemsByGender.forEach(gen => {
+      genderBreakdown[gen._id || "Unisex"] = gen.count;
+    });
+
+    const statusBreakdown = {};
+    itemsByStatus.forEach(stat => {
+      statusBreakdown[stat._id || "Available"] = stat.count;
+    });
+
     const stats = {
-      totalUsers: userCount,
-      totalClothingItems: clothingCount,
-      totalOutfits: 0,
-      totalAppointments: 0,
+      users: {
+        total: userCount,
+        admins: adminCount,
+        regularUsers: regularUsers,
+      },
+      clothing: {
+        total: clothingCount,
+        withImages: itemsWithImages,
+        withoutImages: itemsWithoutImages,
+        imagePercentage: clothingCount > 0 ? Math.round(itemsWithImages / clothingCount * 100) : 0,
+      },
+      categoryBreakdown: categoryBreakdown,
+      genderBreakdown: genderBreakdown,
+      statusBreakdown: statusBreakdown,
+      engagement: {
+        avgItemsPerUser: avgItemsPerUser,
+      },
+      outfits: {
+        total: 0,
+      },
     };
 
     res.json(stats);
@@ -292,30 +323,6 @@ export const getSystemStats = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch stats" });
   }
 };
-
-// -------- APPOINTMENTS (stubs for now) --------
-export const getAllAppointments = async (req, res) => {
-  try {
-    // TODO: replace when Appointment model exists
-    // const appointments = await Appointment.find();
-    // return res.json(appointments);
-    res.status(501).json({ message: "Appointments not implemented yet" });
-  } catch (err) {
-    console.error("getAllAppointments error:", err);
-    res.status(500).json({ message: "Failed to fetch appointments" });
-  }
-};
-
-export const updateAppointment = async (req, res) => {
-  try {
-    // TODO: Replace with real Appointment update logic
-    res.status(501).json({ message: "Appointment update not implemented yet" });
-  } catch (err) {
-    console.error("updateAppointment error:", err);
-    res.status(500).json({ message: "Failed to update appointment" });
-  }
-};
-
 // -------- EXPORTS --------
 const buildCsv = (rows, headers) => {
   const headerLine = headers.join(",");
